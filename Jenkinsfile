@@ -6,13 +6,30 @@ pipeline {
         scmUrl = scm.getUserRemoteConfigs()[0].getUrl()
     }
     stages {
-        stage('Logical Coupling') {
+//         stage('Logical Coupling') {
+//             steps {
+//               sh 'apt-get install python'
+//               sh 'python pip install -r requirements.txt'
+//               sh 'python main.py  --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
+//             }
+//         }
+
+        stage('Load Docker Image') {
             steps {
-              sh 'apt-get install python'
-              sh 'python pip install -r requirements.txt'
-              sh 'python main.py  --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
+                script {
+                    sh 'docker load -i logical_coupling.tar'
+                }
             }
         }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh 'docker run logical_coupling_1 --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
+                }
+            }
+        }
+
         stage('Compile') {
             steps {
                 echo 'Compile the source code'
