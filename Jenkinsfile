@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('Logical Coupling') {
             steps {
+              sh 'apt-get install python'
               sh 'python pip install -r requirements.txt'
               sh 'python main.py  --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
             }
