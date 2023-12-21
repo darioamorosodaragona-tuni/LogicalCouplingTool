@@ -17,7 +17,7 @@ pipeline {
         stage('Load Docker Image') {
             steps {
                 script {
-                    sh 'docker load -i logical_coupling.tar'
+                    sh 'docker load -i logical_coupling_1.tar'
                 }
             }
         }
