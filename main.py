@@ -12,9 +12,9 @@ def main(repo_url, branch, commit):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("commit_hash")
-    parser.add_argument("branch")
-    parser.add_argument("repo_url")
+    parser.add_argument("--commit_hash")
+    parser.add_argument("--branch")
+    parser.add_argument("--repo_url")
     args = parser.parse_args()
     print(args.repo_url, args.branch, args.commit_hash)
 

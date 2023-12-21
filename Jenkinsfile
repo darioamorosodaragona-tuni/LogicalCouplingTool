@@ -1,9 +1,15 @@
 pipeline {
     agent any
+    environment {
+        branchName = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
+        commitHash = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+        scmUrl = scm.getUserRemoteConfigs()[0].getUrl()
+    }
     stages {
-        stage('Static Analysi') {
+        stage('Logical Coupling') {
             steps {
-                echo 'Run the static analysis to the code'
+              sh 'python pip install -r requirements.txt'
+              sh 'python main.py  --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
             }
         }
         stage('Compile') {
