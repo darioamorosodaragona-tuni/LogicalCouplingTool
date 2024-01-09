@@ -3,6 +3,7 @@ import fnmatch
 import itertools
 import math
 import os
+import shutil
 import sys
 from operator import itemgetter
 
@@ -83,11 +84,14 @@ def analyze_actual_commit(path_to_repo, branch, commit_hash, to_ignore):
     #
     # self.loader.save()
 
-def convertToNumber (s):
+
+def convertToNumber(s):
     return int.from_bytes(s.encode(), 'little')
 
-def convertFromNumber (n):
+
+def convertFromNumber(n):
     return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
+
 
 def root_calculator(file_path: str) -> str:
     path = file_path.lstrip(os.sep)
@@ -123,6 +127,10 @@ def alert(data_extracted, previous_data):
         previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
     new_coupling['LC_VALUE'] = 0
 
+    to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
+    to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
+    new_coupling['COMPONENT 1'] = new_coupling['COMPONENT 1'].astype(str)
+    new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
 
     to_alert['LC_VALUE'] = to_alert['LC_VALUE_x'].combine_first(to_alert['LC_VALUE_y'])
@@ -134,16 +142,16 @@ def alert(data_extracted, previous_data):
     return pd.DataFrame(new_rows)
 
 
-def print_alert(increasing_data):
+def alert_messages(increasing_data):
+    message = ""
     for index, row in increasing_data.iterrows():
         if row['OLD_LC_VALUE'] >= 5:
-            print(
-                f"The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}")
+            message += f"The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}\n"
         elif row['NEW_LC_VALUE'] >= 5:
-            print(f"The components  {row['COMPONENT 1']} and {row['COMPONENT 2']} are coupled: {row['NEW_LC_VALUE']}")
+            message += f"The components  {row['COMPONENT 1']} and {row['COMPONENT 2']} are coupled: {row['NEW_LC_VALUE']}\n"
         else:
-            print(
-                f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}")
+           message += f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}\n"
+    return message
 
 
 def save(data, repo_name):
@@ -155,35 +163,34 @@ def initialize():
         os.mkdir('../.data')
 
 
+def main(repo_url, branch, commit_hash):
+    try:
+        exit_code = 0
 
-if __name__ == '__main__':
-    exit_code = 0
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--commit_hash")
-    parser.add_argument("--branch")
-    parser.add_argument("--repo_url")
+        initialize()
 
-    args = parser.parse_args()
-    print(args.repo_url, args.branch, args.commit_hash)
+        commit_hash = commit_hash
+        branch = branch
+        repo_url = repo_url
+        repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
-    initialize()
+        path_to_cloned_repo = checkout(repo_url, branch, commit_hash)
+        data, components_to_ignore = load_previous_results(repo_name)
+        new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
 
-    commit_hash = args.commit_hash
-    branch = args.branch
-    repo_url = args.repo_url
-    repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+        if new_data.empty:
+            print("No new coupling found ")
+        else:
+            exit_code = 1
 
-    path_to_cloned_repo = checkout(repo_url, branch, commit_hash)
-    data, components_to_ignore = load_previous_results(repo_name)
-    new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
+        save(new_data, repo_name)
+        alert_data = alert(new_data, data)
+        messages = alert_messages(alert_data)
+        return exit_code, messages
 
-    if new_data.empty:
-        print("No new coupling found ")
-    else:
-        exit_code = 1
+    except Exception as e:
 
-    save(new_data, repo_name)
-    alert_data = alert(new_data, data)
-    print_alert(alert_data)
-    sys.exit(exit_code)
+        return 1, "Error in logical coupling tool"
 
+    finally:
+        shutil.rmtree('.temp/', ignore_errors=True)
