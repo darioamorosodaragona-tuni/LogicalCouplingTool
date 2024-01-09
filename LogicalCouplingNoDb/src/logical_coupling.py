@@ -192,7 +192,7 @@ def main(repo_url, branch, commit_hash):
     except Exception as e:
         print(e)
         print(traceback.format_exc())
-        return 1, "Error in logical coupling tool"
+        return -1, "Error in logical coupling tool"
 
     finally:
         shutil.rmtree('.temp/', ignore_errors=True)
