@@ -1,6 +1,9 @@
 import argparse
+import fnmatch
 import itertools
+import math
 import os
+import sys
 from operator import itemgetter
 
 import pandas
@@ -15,8 +18,10 @@ def checkout(repo_url, branch, commit_hash):
     return path
 
 
-def load_previuos_results(repo_name):
+def load_previous_results(repo_name):
     file = f'../.data/{repo_name}/LogicalCoupling.csv'
+    ignore = f'../.data/{repo_name}/.lcignore'
+
     if os.path.exists(file):
         print("Previous results found")
         data = pandas.read_csv(file)
@@ -25,25 +30,45 @@ def load_previuos_results(repo_name):
         os.makedirs(f'../.data/{repo_name}', exist_ok=True)
         data = pandas.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
 
-    return data
+    component_to_ignore = []
+    if os.path.exists(ignore):
+        with open(ignore, 'r') as file:
+            lines = file.readlines()
+
+        component_to_ignore = [line.strip() for line in lines]
+
+    return data, component_to_ignore
 
 
-def analyze_actual_commit(path_to_repo, branch, commit_hash):
+def analyze_actual_commit(path_to_repo, branch, commit_hash, to_ignore):
     result = []
     for commit in pydriller.Repository(path_to_repo, single=commit_hash, only_in_branch=branch).traverse_commits():
 
         modified_files = commit.modified_files
 
         for files in modified_files:
-            result.append(files.new_path)
+            if not any(fnmatch.fnmatch(files.new_path, pattern) for pattern in to_ignore):
+                result.append(files.new_path)
 
-    components = [root_calculator(file_path) for file_path in result]
-    combinations = list(itertools.combinations(list(set(components)), 2))
-    combinations_sorted = sorted(combinations, key=itemgetter(0))
-    new_data = pandas.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
+    # components = [root_calculator(file_path) for file_path in result]
+    components = []
+    for file_path in result:
+        components.append(root_calculator(file_path))
+
+    components.sort()
+    components = set(components)
+    components = [convertToNumber(component) for component in components]
+    combinations = list(itertools.combinations(components, 2))
+    combinations_sorted = sorted(combinations)
+    component_1 = []
+    component_2 = []
+    lc_value = []
     for comb in combinations_sorted:
-        new_data = new_data.append({'COMPONENT 1': comb[0], 'COMPONENT 2': comb[1], 'LC_VALUE': 1}, ignore_index=True)
-    return new_data
+        component_1.append(convertFromNumber(comb[0]))
+        component_2.append(convertFromNumber(comb[1]))
+        lc_value.append(1)
+
+    return pandas.DataFrame({'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value})
 
     # for combination in combinations_sorted:
     #
@@ -58,8 +83,13 @@ def analyze_actual_commit(path_to_repo, branch, commit_hash):
     #
     # self.loader.save()
 
+def convertToNumber (s):
+    return int.from_bytes(s.encode(), 'little')
 
-def root_calculator(self, file_path: str) -> str:
+def convertFromNumber (n):
+    return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
+
+def root_calculator(file_path: str) -> str:
     path = file_path.lstrip(os.sep)
     root = path[:path.index(os.sep)] if os.sep in path else path
     return root
@@ -86,10 +116,11 @@ def alert(data_extracted, previous_data):
     new_rows = []
     # data = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'NEW_LC_VALUE', 'OLD_LC_VALUE'])
 
+    to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
+        data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
 
-    to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
-
-    new_coupling = data_extracted[~data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
+    new_coupling = data_extracted[~data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
+        previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
     new_coupling['LC_VALUE'] = 0
 
     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
@@ -106,11 +137,14 @@ def alert(data_extracted, previous_data):
 def print_alert(increasing_data):
     for index, row in increasing_data.iterrows():
         if row['OLD_LC_VALUE'] >= 5:
-            print(f"The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}")
+            print(
+                f"The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}")
         elif row['NEW_LC_VALUE'] >= 5:
             print(f"The components  {row['COMPONENT 1']} and {row['COMPONENT 2']} are coupled: {row['NEW_LC_VALUE']}")
         else:
-            print(f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}")
+            print(
+                f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}")
+
 
 def save(data, repo_name):
     data.to_csv(f'../.data/{repo_name}/LogicalCoupling.csv', index=False)
@@ -119,16 +153,15 @@ def save(data, repo_name):
 def initialize():
     if not os.path.exists('../.data'):
         os.mkdir('../.data')
-    # if not os.path.exists('../.temp'):
-    #     os.mkdir('../.temp')
+
 
 
 if __name__ == '__main__':
+    exit_code = 0
     parser = argparse.ArgumentParser()
     parser.add_argument("--commit_hash")
     parser.add_argument("--branch")
     parser.add_argument("--repo_url")
-
 
     args = parser.parse_args()
     print(args.repo_url, args.branch, args.commit_hash)
@@ -138,11 +171,19 @@ if __name__ == '__main__':
     commit_hash = args.commit_hash
     branch = args.branch
     repo_url = args.repo_url
-    repo_name = repo_url.split('/')[-1].split('.')[0]+"b:"+branch
-
-
+    repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
     path_to_cloned_repo = checkout(repo_url, branch, commit_hash)
-    data = load_previuos_results(repo_name)
-    new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash)
+    data, components_to_ignore = load_previous_results(repo_name)
+    new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
+
+    if new_data.empty:
+        print("No new coupling found ")
+    else:
+        exit_code = 1
+
     save(new_data, repo_name)
+    alert_data = alert(new_data, data)
+    print_alert(alert_data)
+    sys.exit(exit_code)
+
