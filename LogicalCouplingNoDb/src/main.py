@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-from LogicalCouplingNoDb.src.logical_coupling import main
+from logical_coupling import main
 
 app = Flask(__name__)
 
