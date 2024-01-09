@@ -5,6 +5,7 @@ import math
 import os
 import shutil
 import sys
+import traceback
 from operator import itemgetter
 
 import pandas
@@ -189,7 +190,8 @@ def main(repo_url, branch, commit_hash):
         return exit_code, messages
 
     except Exception as e:
-
+        print(e)
+        print(traceback.format_exc())
         return 1, "Error in logical coupling tool"
 
     finally:
