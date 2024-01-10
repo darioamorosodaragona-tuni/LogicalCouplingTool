@@ -26,7 +26,7 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
     else:
         print("No previous results found")
         os.makedirs(path_to_data, exist_ok=True)
-
+        print("LOADED PREVIOUS RESULTS")
 
     checkout(path_to_repo, branch)
 
@@ -71,7 +71,9 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
 
     components_to_alert = []
 
+    print(data)
     for component in components:
+        print(component)
         if component in data:
             with open(f"{path_to_data}/{component}", 'r') as file:
                 lines = file.readlines()
@@ -88,13 +90,12 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
 
     return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
 
+
 def alert_message(data):
     messages = ""
     for index, row in data.iterrows():
         messages += f"Developer {row['DEVELOPER']} modified component {row['COMPONENT']} for the first time\n"
     return messages
-
-
 
 
 def run(repo_url, branch, commit_hash):
@@ -109,7 +110,6 @@ def run(repo_url, branch, commit_hash):
         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
         path_to_data = f'../.data/{repo_name}/developer_coupling'
-
 
         path_to_cloned_repo = clone(repo_url)
 
@@ -130,10 +130,10 @@ def run(repo_url, branch, commit_hash):
             exit_code = 1, message
 
     except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            exit_code = -1
-            message = "Error in developer coupling tool"
+        print(e)
+        print(traceback.format_exc())
+        exit_code = -1
+        message = "Error in developer coupling tool"
 
     finally:
         shutil.rmtree('.temp/', ignore_errors=True)
