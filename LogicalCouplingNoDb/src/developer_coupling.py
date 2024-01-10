@@ -24,6 +24,7 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
         result = os.listdir(path_to_data)
         print(path_to_data)
         print(os.path.abspath(path_to_data))
+        print(os.path.relpath('LogicalCouplingNoDb', f'{os.getcwd()}'))
 
     else:
         print("No previous results found")
