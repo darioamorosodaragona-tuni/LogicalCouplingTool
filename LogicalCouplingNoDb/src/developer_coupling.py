@@ -22,6 +22,8 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
     if os.path.exists(path_to_data):
         print("Previous results found")
         result = os.listdir(path_to_data)
+        print(path_to_data)
+        print(os.path.abspath(path_to_data))
 
     else:
         print("No previous results found")
