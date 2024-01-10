@@ -11,7 +11,7 @@ def clone(repo_url):
 def checkout(path_to_repo, branch):
     repo = Repo(path_to_repo)
     git = repo.git
-    git.branch(branch)
+    git.checkout(branch)
     git.for_each_ref()
 
 def root_calculator(file_path: str) -> str:

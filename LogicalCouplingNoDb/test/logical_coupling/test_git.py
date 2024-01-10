@@ -29,7 +29,7 @@ class TestLoader(unittest.TestCase):
         repo.index.commit("Update to file2")
 
         git = repo.git
-        git.clone(b="my_new_branch")  # create a new branch
+        git.checkout(b="my_new_branch")  # create a new branch
         # git.branch("my_new_branch")  # pass strings for full control over argument order
         git.for_each_ref()  # '-' becomes '_' when calling it
 
@@ -43,7 +43,7 @@ class TestLoader(unittest.TestCase):
         repo.index.add(add_file)
         repo.index.commit("Updated lcignore")
 
-        git.clone('main')
+        git.checkout('main')
 
         _, component_to_ignore = load_previous_results("ProjectToTestLogicalCouplingTool", self.path, "my_new_branch")
         expected = ["component1/*"]
