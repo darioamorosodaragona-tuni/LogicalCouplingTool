@@ -27,6 +27,8 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
         print("No previous results found")
         os.makedirs(path_to_data, exist_ok=True)
         print("LOADED PREVIOUS RESULTS")
+        print(path_to_data)
+        print(os.path.abspath(path_to_data))
 
     checkout(path_to_repo, branch)
 
