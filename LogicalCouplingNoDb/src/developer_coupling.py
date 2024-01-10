@@ -22,16 +22,16 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
     if os.path.exists(path_to_data):
         print("Previous results found")
         result = os.listdir(path_to_data)
-        print(path_to_data)
-        print(os.path.abspath(path_to_data))
-        print(os.path.relpath('LogicalCouplingNoDb', f'{os.getcwd()}'))
+        # print(path_to_data)
+        # print(os.path.abspath(path_to_data))
+        # print(os.path.relpath('LogicalCouplingNoDb', f'{os.getcwd()}'))
 
     else:
         print("No previous results found")
         os.makedirs(path_to_data, exist_ok=True)
-        print("LOADED PREVIOUS RESULTS")
-        print(path_to_data)
-        print(os.path.abspath(path_to_data))
+        # print("LOADED PREVIOUS RESULTS")
+        # print(path_to_data)
+        # print(os.path.abspath(path_to_data))
 
     checkout(path_to_repo, branch)
 
@@ -114,7 +114,8 @@ def run(repo_url, branch, commit_hash):
         repo_url = repo_url
         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
-        path_to_data = f'../.data/{repo_name}/developer_coupling'
+        path_to_data = f'.data/{repo_name}/developer_coupling'
+        path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
 
         path_to_cloned_repo = clone(repo_url)
 

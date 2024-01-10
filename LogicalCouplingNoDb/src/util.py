@@ -22,3 +22,5 @@ def root_calculator(file_path: str) -> str:
 def initialize():
     if not os.path.exists('../.data'):
         os.mkdir('../.data')
+
+

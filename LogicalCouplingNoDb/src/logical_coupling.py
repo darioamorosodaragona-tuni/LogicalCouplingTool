@@ -18,7 +18,8 @@ from util import clone, checkout, initialize, root_calculator
 
 def load_previous_results(repo_name, path_to_repo, branch):
 
-    file = f'../.data/{repo_name}/LogicalCoupling.csv'
+    file = f'.data/{repo_name}/LogicalCoupling.csv'
+    file = os.path.relpath(file, os.getcwd())
 
     checkout(path_to_repo, branch)
 
@@ -137,7 +138,9 @@ def alert_messages(increasing_data):
 
 
 def save(data, repo_name):
-    data.to_csv(f'../.data/{repo_name}/LogicalCoupling.csv', index=False)
+    file = f'.data/{repo_name}/LogicalCoupling.csv'
+    file = os.path.relpath(file, os.getcwd())
+    data.to_csv(file, index=False)
 
 
 def run(repo_url, branch, commit_hash):
