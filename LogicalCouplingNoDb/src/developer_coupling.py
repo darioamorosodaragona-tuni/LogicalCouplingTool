@@ -88,10 +88,10 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
                 components_to_alert.append(component)
 
                 with open(f"{path_to_data}/{component}", 'a') as file:
-                    file.write(developer)
+                    file.write(developer+'\n')
         else:
             with open(f"{path_to_data}/{component}", 'w+') as file:
-                file.write(developer)
+                file.write(developer+'\n')
 
     return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
 
