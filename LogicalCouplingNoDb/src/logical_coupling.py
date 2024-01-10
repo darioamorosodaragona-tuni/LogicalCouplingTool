@@ -13,16 +13,16 @@ import pandas as pd
 import pydriller
 from git import Repo
 
-
-def checkout(repo_url, branch, commit_hash):
-    path = f".temp/{repo_url.replace('/', '_')}"
-    Repo.clone_from(repo_url, path)
-    return path
+from util import clone, checkout, initialize
 
 
-def load_previous_results(repo_name):
+def load_previous_results(repo_name, path_to_repo, branch):
+
     file = f'../.data/{repo_name}/LogicalCoupling.csv'
-    ignore = f'../.data/{repo_name}/.lcignore'
+
+    checkout(path_to_repo, branch)
+
+    ignore = f'{path_to_repo}/.lcignore'
 
     if os.path.exists(file):
         print("Previous results found")
@@ -72,19 +72,6 @@ def analyze_actual_commit(path_to_repo, branch, commit_hash, to_ignore):
 
     return pandas.DataFrame({'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value})
 
-    # for combination in combinations_sorted:
-    #
-    #
-    #     to_find = f"C1:{combination[0]}!C2:{combination[1]}"
-    #     cond = self.components_coupling[self.components_coupling['COMPONENTS'] == to_find]
-    #     if cond.empty:
-    #         self.components_coupling = self.components_coupling.append(
-    #             {'COMPONENTS': to_find, 'COUPLING': 1}, ignore_index=True)
-    #     else:
-    #         self.components_coupling.loc[cond.index, 'COUPLING'] += 1
-    #
-    # self.loader.save()
-
 
 def convertToNumber(s):
     return int.from_bytes(s.encode(), 'little')
@@ -92,12 +79,6 @@ def convertToNumber(s):
 
 def convertFromNumber(n):
     return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
-
-
-def root_calculator(file_path: str) -> str:
-    path = file_path.lstrip(os.sep)
-    root = path[:path.index(os.sep)] if os.sep in path else path
-    return root
 
 
 def update_data(data, new_data):
@@ -159,12 +140,7 @@ def save(data, repo_name):
     data.to_csv(f'../.data/{repo_name}/LogicalCoupling.csv', index=False)
 
 
-def initialize():
-    if not os.path.exists('../.data'):
-        os.mkdir('../.data')
-
-
-def main(repo_url, branch, commit_hash):
+def run(repo_url, branch, commit_hash):
     try:
         exit_code = 0
 
@@ -175,8 +151,8 @@ def main(repo_url, branch, commit_hash):
         repo_url = repo_url
         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
-        path_to_cloned_repo = checkout(repo_url, branch, commit_hash)
-        data, components_to_ignore = load_previous_results(repo_name)
+        path_to_cloned_repo = clone(repo_url)
+        data, components_to_ignore = load_previous_results(repo_name, path_to_cloned_repo, branch)
         new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
 
         if new_data.empty:

@@ -1,59 +1,106 @@
 pipeline {
     agent any
-    environment {
-        branchName = "${env.GIT_BRANCH.split('/').size() == 1 ? env.GIT_BRANCH.split('/')[-1] : env.GIT_BRANCH.split('/')[1..-1].join('/')}"
-        commitHash = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
-        scmUrl = scm.getUserRemoteConfigs()[0].getUrl()
-    }
+
     stages {
-//         stage('Logical Coupling') {
-//             steps {
-//               sh 'apt-get install python'
-//               sh 'python pip install -r requirements.txt'
-//               sh 'python main.py  --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
-//             }
-//         }
-
-        stage('Load Docker Image') {
+        stage('Logical Coupling') {
             steps {
                 script {
-                    sh 'docker load -i logical_coupling_1.tar'
+
+                    // Replace the URL with the actual URL of your Flask app
+                    def flaskAppUrl = 'http://darioserver.duckdns.org:5001/logical-coupling'
+
+                    // Example parameters to pass to the Flask app
+                            // Get the repository URL
+                    def repoUrl = env.GIT_URL
+
+                    // Get the commit hash
+                    def commitHash = env.GIT_COMMIT
+
+                    // Get the branch name
+                    // def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+
+
+                    echo "Repository URL: ${repoUrl}"
+                    echo "Commit Hash: ${commitHash}"
+                    echo "Branch Name: main"
+
+
+                    // Use curl to make an HTTP request to the Flask app
+                    def response = sh(script: "curl -G -d 'git_url=${repoUrl}' -d 'commit_hash=${commitHash}' -d 'branch=main' http://darioserver.duckdns.org:5001/logical-coupling", returnStdout: true).trim()
+
+
+                    echo "Raw Response from Flask App: ${response}"
+
+                    // Parse the JSON response
+                    def jsonResponse = readJSON text: response
+
+                    // Access exit code and message from the JSON response
+                    def exitCode = jsonResponse.exit_code
+                    def message = jsonResponse.message
+
+                    echo "Exit Code: ${exitCode}"
+                    echo "Message: ${message}"
+
+                    // Determine whether the stage should pass or fail
+                    if (exitCode == 0) {
+                        echo "Stage passed."
+                    } else {
+                        error "Stage failed. Exit Code: ${exitCode}, Message: ${message}"
+                    }
                 }
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Developer Coupling') {
             steps {
                 script {
-                    sh 'docker run logical_coupling_1 --branch ${branchName} --commit_hash ${commitHash} --repo_url ${scmUrl}'
+
+                    // Replace the URL with the actual URL of your Flask app
+                    def flaskAppUrl = 'http://darioserver.duckdns.org:5001/developer-coupling'
+
+                    // Example parameters to pass to the Flask app
+                            // Get the repository URL
+                    def repoUrl = env.GIT_URL
+
+                    // Get the commit hash
+                    def commitHash = env.GIT_COMMIT
+
+                    // Get the branch name
+                    // def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+
+
+                    echo "Repository URL: ${repoUrl}"
+                    echo "Commit Hash: ${commitHash}"
+                    echo "Branch Name: main"
+
+
+                    // Use curl to make an HTTP request to the Flask app
+                    def response = sh(script: "curl -G -d 'git_url=${repoUrl}' -d 'commit_hash=${commitHash}' -d 'branch=main' http://darioserver.duckdns.org:5001/logical-coupling", returnStdout: true).trim()
+
+
+                    echo "Raw Response from Flask App: ${response}"
+
+                    // Parse the JSON response
+                    def jsonResponse = readJSON text: response
+
+                    // Access exit code and message from the JSON response
+                    def exitCode = jsonResponse.exit_code
+                    def message = jsonResponse.message
+
+                    echo "Exit Code: ${exitCode}"
+                    echo "Message: ${message}"
+
+                    // Determine whether the stage should pass or fail
+                    if (exitCode == 0) {
+                        echo "Stage passed."
+                    } else {
+                        error "Stage failed. Exit Code: ${exitCode}, Message: ${message}"
+                    }
                 }
             }
         }
 
-        stage('Compile') {
-            steps {
-                echo 'Compile the source code'
-            }
-        }
-        stage('Security Check') {
-            steps {
-                echo 'Run the security check against the application'
-            }
-        }
-        stage('Run Unit Tests') {
-            steps {
-                echo 'Run unit tests from the source code'
-            }
-        }
-        stage('Run Integration Tests') {
-            steps {
-                echo 'Run only crucial integration tests from the source code'
-            }
-        }
-        stage('Publish Artifacts') {
-            steps {
-                echo 'Sve the assemblies generated from the compilation'
-            }
-        }
+
     }
+
 }

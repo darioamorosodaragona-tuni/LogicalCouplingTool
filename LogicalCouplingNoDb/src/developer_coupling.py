@@ -3,7 +3,9 @@ import fnmatch
 import itertools
 import math
 import os
+import shutil
 import sys
+import traceback
 from operator import itemgetter
 
 import pandas
@@ -11,22 +13,20 @@ import pandas as pd
 import pydriller
 from git import Repo
 
-
-def checkout(repo_url):
-    path = f".temp/{repo_url.replace('/', '_')}"
-    Repo.clone_from(repo_url, path)
-    return path
+from util import clone, checkout, initialize
 
 
-def load_previous_results(path_to_data, path_to_dev_ignore_file, path_to_comp_ignore_file):
+def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore_file, path_to_comp_ignore_file):
     result = []
 
     if os.path.exists(path_to_data):
         print("Previous results found")
-        result = os.listdir(data)
+        result = os.listdir(path_to_data)
 
     else:
         print("No previous results found")
+
+    checkout(path_to_repo, branch)
 
     component_to_ignore = []
     developer_to_ignore = []
@@ -86,55 +86,54 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
 
     return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
 
-
-def root_calculator(file_path: str) -> str:
-    path = file_path.lstrip(os.sep)
-    root = path[:path.index(os.sep)] if os.sep in path else path
-    return root
-
-
-def print_alert(data):
+def alert_message(data):
+    messages = ""
     for index, row in data.iterrows():
-        print(f"Developer {row['DEVELOPER']} modified component {row['COMPONENT']} for the first time")
+        messages += f"Developer {row['DEVELOPER']} modified component {row['COMPONENT']} for the first time\n"
+    return messages
 
 
-def initialize():
-    if not os.path.exists('../.data'):
-        os.mkdir('../.data')
 
 
-if __name__ == '__main__':
-    exit_code = 0
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--commit_hash")
-    parser.add_argument("--branch")
-    parser.add_argument("--repo_url")
+def run(repo_url, branch, commit_hash):
+    try:
+        exit_code = 0
 
-    args = parser.parse_args()
-    print(args.repo_url, args.branch, args.commit_hash)
+        initialize()
 
-    initialize()
+        commit_hash = commit_hash
+        branch = branch
+        repo_url = repo_url
+        repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
 
-    commit_hash = args.commit_hash
-    branch = args.branch
-    repo_url = args.repo_url
-    repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+        path_to_data = f'../.data/{repo_name}/developer_coupling'
 
-    path_to_data = f'../.data/{repo_name}/developer_coupling'
-    path_to_dev_ignore_file = f'../.data/{repo_name}/.devignore'
-    path_to_comp_ignore_file = f'../.data/{repo_name}/.dev_comp_ignore'
 
-    path_to_cloned_repo = checkout(repo_url)
-    data, components_to_ignore, developers_to_ignore = load_previous_results(path_to_data,
-                                                                             path_to_dev_ignore_file,
-                                                                             path_to_comp_ignore_file)
-    new_data = analyze_and_save_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore,
-                                              developers_to_ignore)
+        path_to_cloned_repo = clone(repo_url)
 
-    if new_data.empty:
-        print("No new coupling found ")
-    else:
-        exit_code = 1
+        path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
+        path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
 
-    print_alert(new_data)
-    sys.exit(exit_code)
+        data, components_to_ignore, developers_to_ignore = load_previous_results(path_to_data,
+                                                                                 path_to_cloned_repo,
+                                                                                 branch,
+                                                                                 path_to_dev_ignore_file,
+                                                                                 path_to_comp_ignore_file)
+
+        new_data = analyze_and_save_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore,
+                                                  developers_to_ignore, path_to_data)
+        message = alert_message(new_data)
+
+        if not new_data.empty:
+            exit_code = 1, message
+
+    except Exception as e:
+            print(e)
+            print(traceback.format_exc())
+            exit_code = -1
+            message = "Error in developer coupling tool"
+
+    finally:
+        shutil.rmtree('.temp/', ignore_errors=True)
+
+    return exit_code, message
