@@ -13,7 +13,7 @@ import pandas as pd
 import pydriller
 from git import Repo
 
-from util import clone, checkout, initialize
+from util import clone, checkout, initialize, root_calculator
 
 
 def load_previous_results(repo_name, path_to_repo, branch):
