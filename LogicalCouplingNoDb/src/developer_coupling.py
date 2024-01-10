@@ -121,7 +121,7 @@ def run(repo_url, branch, commit_hash):
                                                                                  path_to_comp_ignore_file)
 
         new_data = analyze_and_save_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore,
-                                                  developers_to_ignore, path_to_data)
+                                                  developers_to_ignore, data, path_to_data)
         message = alert_message(new_data)
 
         if not new_data.empty:
