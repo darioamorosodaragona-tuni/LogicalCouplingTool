@@ -81,6 +81,7 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
                 with open(f"{path_to_data}/{component}", 'a') as file:
                     file.write(developer)
         else:
+            os.makedirs(f"{path_to_data}/{component}", exist_ok=True)
             with open(f"{path_to_data}/{component}", 'w+') as file:
                 file.write(developer)
 
