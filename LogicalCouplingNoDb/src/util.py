@@ -4,7 +4,7 @@ from git import Repo
 
 
 def clone(repo_url):
-    path = f".temp/{repo_url.replace('/', '_')}"
+    path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
     Repo.clone_from(repo_url, path)
     return path
 
