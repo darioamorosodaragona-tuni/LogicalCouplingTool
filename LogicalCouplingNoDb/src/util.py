@@ -7,7 +7,7 @@ def clone(repo_url):
     path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
     print(os.path.relpath(path, os.getcwd()))
     print(os.path.abspath(path))
-    # Repo.clone_from(repo_url, path)
+    Repo.clone_from(repo_url, path)
     return path
 
 def checkout(path_to_repo, branch):
