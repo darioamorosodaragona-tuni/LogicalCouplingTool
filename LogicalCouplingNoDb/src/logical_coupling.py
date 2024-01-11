@@ -34,6 +34,7 @@ def load_previous_results(repo_name, path_to_repo, branch):
         data = pandas.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
 
     component_to_ignore = []
+    print(ignore)
     if os.path.exists(ignore):
         print("Ignore file found")
         with open(ignore, 'r') as file:
