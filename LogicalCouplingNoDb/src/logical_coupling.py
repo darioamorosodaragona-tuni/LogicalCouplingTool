@@ -35,10 +35,12 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
     component_to_ignore = []
     if os.path.exists(ignore):
+        print("Ignore file found")
         with open(ignore, 'r') as file:
             lines = file.readlines()
 
         component_to_ignore = [line.strip() for line in lines]
+        print(component_to_ignore)
 
     return data, component_to_ignore
 
