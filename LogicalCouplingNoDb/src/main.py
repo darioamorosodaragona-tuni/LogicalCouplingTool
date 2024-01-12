@@ -14,30 +14,33 @@ developer_coupling_logger = util.setup_logging("developer_coupling")
 def load_args():
     git_url = request.args.get('git_url')
     branch = request.args.get('branch')
-    commit_hash = request.args.get('commit_hash')
-    return git_url, branch, commit_hash
+    commits = request.args.get('commits')
+    commits_list = commits.split(',')
+
+    return git_url, branch, commits_list
 
 
-def run(function, git_url, branch, commit_hash):
+def run(function, git_url, branch, commits_list):
 
     if function is logical_coupling:
         logger = logical_coupling_logger
     else:
         logger = developer_coupling_logger
 
-    if git_url is None or branch is None or commit_hash is None:
+    if git_url is None or branch is None or commits_list is None:
         # Return an error response if any parameter is missing
         logger.error("Missing parameters")
         return jsonify({"error": "Missing parameters"}), 400  # 400 is the HTTP status code for Bad Request
 
-    exit_code, messages = function(git_url, branch, commit_hash)
+    exit_code, messages, commits = function(git_url, branch, commits_list)
 
     if exit_code >= 0:
 
         # You can use these values in your processing logic
         result = {
             "exit_code": exit_code,
-            "message": messages
+            "message": messages,
+            "commits": commits
         }
         logger.debug(result)
         logger.info("Tool finished successfully")
@@ -55,10 +58,10 @@ def logical_coupling():
     logical_coupling_logger.debug(f"Request:{request}")
     logical_coupling_logger.debug(f"{request.args}")
 
-    git_url, branch, commit_hash = load_args()
-    logical_coupling_logger.info("Analyzing project " + git_url + " on branch " + branch + " with commit " + commit_hash)
+    git_url, branch, commits_list = load_args()
+    logical_coupling_logger.info("Analyzing project " + git_url + " on branch " + branch + " with commits " + commits_list.__str__())
 
-    return run(logical_coupling_run, git_url, branch, commit_hash)
+    return run(logical_coupling_run, git_url, branch, commits_list)
 
 
 @app.route('/developer-coupling', methods=['GET'])

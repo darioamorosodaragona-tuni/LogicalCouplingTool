@@ -4,7 +4,7 @@ import unittest
 from git import Repo
 
 
-from LogicalCouplingNoDb.src.logical_coupling import analyze_actual_commit, load_previous_results
+from LogicalCouplingNoDb.src.logical_coupling import analyze_commits, load_previous_results
 
 
 class TestLoader(unittest.TestCase):

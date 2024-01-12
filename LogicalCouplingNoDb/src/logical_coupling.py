@@ -51,10 +51,12 @@ def load_previous_results(repo_name, path_to_repo, branch):
     return data, component_to_ignore
 
 
-def analyze_actual_commit(path_to_repo, branch, commit_hash, to_ignore):
+def analyze_commits(path_to_repo, branch, commits, to_ignore):
     result = []
-    logger.info(f"Analyzing commit {commit_hash} on branch {branch}")
-    for commit in pydriller.Repository(path_to_repo, single=commit_hash, only_in_branch=branch).traverse_commits():
+    rows = []
+
+    logger.info(f"Analyzing commits {commits} on branch {branch}")
+    for commit in pydriller.Repository(path_to_repo, only_commits=commits, only_in_branch=branch).traverse_commits():
 
         modified_files = commit.modified_files
 
@@ -65,31 +67,34 @@ def analyze_actual_commit(path_to_repo, branch, commit_hash, to_ignore):
             else:
                 logger.debug(f"Ignored file: {files.new_path}")
 
-    # components = [root_calculator(file_path) for file_path in result]
-    components = []
-    for file_path in result:
-        components.append(root_calculator(file_path))
-    logger.debug(f"Components: {components}")
+        # components = [root_calculator(file_path) for file_path in result]
+        components = []
+        for file_path in result:
+            components.append(root_calculator(file_path))
+        logger.debug(f"Components: {components}")
 
-    components.sort()
-    components = set(components)
-    logger.debug(f"Components (string): {components}")
-    components = [convertToNumber(component) for component in components]
-    logger.debug(f"Components (number): {components}")
-    combinations = list(itertools.combinations(components, 2))
-    logger.debug(f"Combinations (unsorted): {combinations}")
-    combinations_sorted = sorted(combinations)
-    logger.debug(f"Combinations (sorted): {combinations_sorted}")
-    component_1 = []
-    component_2 = []
-    lc_value = []
-    for comb in combinations_sorted:
-        component_1.append(convertFromNumber(comb[0]))
-        component_2.append(convertFromNumber(comb[1]))
-        lc_value.append(1)
+        components.sort()
+        components = set(components)
+        logger.debug(f"Components (string): {components}")
+        components = [convertToNumber(component) for component in components]
+        logger.debug(f"Components (number): {components}")
+        combinations = list(itertools.combinations(components, 2))
+        logger.debug(f"Combinations (unsorted): {combinations}")
+        combinations_sorted = sorted(combinations)
+        logger.debug(f"Combinations (sorted): {combinations_sorted}")
+        component_1 = []
+        component_2 = []
+        lc_value = []
+        for comb in combinations_sorted:
+            component_1.append(convertFromNumber(comb[0]))
+            component_2.append(convertFromNumber(comb[1]))
+            lc_value.append(1)
 
-    logger.info(f"Analyzed commit {commit_hash} on branch {branch}")
-    return pandas.DataFrame({'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value})
+        logger.info(f"Analyzed commit {commits} on branch {branch}")
+        rows.append(
+            {'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value, 'COMMIT': commit.hash})
+
+    return pd.DataFrame(rows)
 
 
 def convertToNumber(s):
@@ -145,9 +150,14 @@ def alert(data_extracted, previous_data):
 
 def alert_messages(increasing_data):
     message = ""
+    commit = ""
     for index, row in increasing_data.iterrows():
+        if commit != row['COMMIT']:
+            commit = row['COMMIT']
+            message += f"Commit {commit}:\n"
+
         if row['OLD_LC_VALUE'] >= 5:
-            message += f"The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}\n"
+            message += f"Commit {row['COMMIT']}: The new coupling between the coupled components {row['COMPONENT 1']} and {row['COMPONENT 2']} is increased: {row['NEW_LC_VALUE']}\n"
         elif row['NEW_LC_VALUE'] >= 5:
             message += f"The components  {row['COMPONENT 1']} and {row['COMPONENT 2']} are coupled: {row['NEW_LC_VALUE']}\n"
         else:
@@ -189,7 +199,7 @@ def run(repo_url, branch, commit_hash):
         logger.debug(f"Data: {data}")
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
-        new_data = analyze_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
+        new_data = analyze_commits(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
 
         if new_data.empty:
             logger.info("No new coupling found ")
@@ -197,13 +207,17 @@ def run(repo_url, branch, commit_hash):
             logger.info("New coupling found ")
             exit_code = 1
 
-        save(new_data, repo_name)
         alert_data = alert(new_data, data)
         logger.debug(f"Alert data: {alert_data}")
         messages = alert_messages(alert_data)
+        commits = new_data['COMMIT'].unique()
+        new_data.drop('COMMIT', axis=1, inplace=True)
+        merged_data = update_data(data, new_data)
+        save(merged_data, repo_name)
         logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
-        return exit_code, messages
+
+        return exit_code, messages, commits
 
     except Exception as e:
         logger.error(e)

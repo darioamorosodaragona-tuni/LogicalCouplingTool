@@ -8,7 +8,7 @@ from git import Repo
 
 import src.DBManager as DBManager
 from LogicalCouplingNoDb.src.logical_coupling import update_data, alert, save, initialize, load_previous_results, \
-    analyze_actual_commit
+    analyze_commits
 
 
 class TestCalculator(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestCalculator(unittest.TestCase):
         repo.index.add(add_file)
         repo.index.commit("Update to file2")
 
-        result = analyze_actual_commit(self.path, 'main', 'HEAD', [])
+        result = analyze_commits(self.path, 'main', 'HEAD', [])
         expected = {'COMPONENT 1': ['component1'], 'COMPONENT 2': ['component2'], 'LC_VALUE': [1]}
         df_expected = pd.DataFrame(expected)
         self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
@@ -77,7 +77,7 @@ class TestCalculator(unittest.TestCase):
             repo.index.add(add_file)
             repo.index.commit("Update to file2")
 
-            result = analyze_actual_commit(self.path, 'main', 'HEAD', [])
+            result = analyze_commits(self.path, 'main', 'HEAD', [])
             expected = {'COMPONENT 1': ['component1'], 'COMPONENT 2': ['component2'], 'LC_VALUE': [1]}
             df_expected = pd.DataFrame(expected)
             self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
@@ -119,7 +119,7 @@ class TestCalculator(unittest.TestCase):
         repo.index.commit("Update to file2")
         ignore = ['component3/*']
 
-        result = analyze_actual_commit(self.path, 'main', 'HEAD', ignore)
+        result = analyze_commits(self.path, 'main', 'HEAD', ignore)
         expected = {'COMPONENT 1': ['component1'], 'COMPONENT 2': ['component2'], 'LC_VALUE': [1]}
         df_expected = pd.DataFrame(expected)
         self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
@@ -160,7 +160,7 @@ class TestCalculator(unittest.TestCase):
         repo.index.commit("Update to file2")
         ignore = ['component3/B.py']
 
-        result = analyze_actual_commit(self.path, 'main', 'HEAD', ignore)
+        result = analyze_commits(self.path, 'main', 'HEAD', ignore)
         expected = {'COMPONENT 1': ['component1'], 'COMPONENT 2': ['component2'], 'LC_VALUE': [1]}
         df_expected = pd.DataFrame(expected)
         self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
@@ -195,7 +195,7 @@ class TestCalculator(unittest.TestCase):
             repo.index.commit("Update to file2")
             ignore = ['component2/*']
 
-            result = analyze_actual_commit(self.path, 'main', 'HEAD', ignore)
+            result = analyze_commits(self.path, 'main', 'HEAD', ignore)
             expected = {'COMPONENT 1': [], 'COMPONENT 2': [], 'LC_VALUE': []}
             df_expected = pd.DataFrame(expected)
             self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
@@ -235,7 +235,7 @@ class TestCalculator(unittest.TestCase):
         repo.index.commit("Update to file2")
         ignore = ['component2/dir/*']
 
-        result = analyze_actual_commit(self.path, 'main', 'HEAD', ignore)
+        result = analyze_commits(self.path, 'main', 'HEAD', ignore)
         expected = {'COMPONENT 1': ['component1'], 'COMPONENT 2': ['component2'], 'LC_VALUE': [1]}
         df_expected = pd.DataFrame(expected)
         self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")

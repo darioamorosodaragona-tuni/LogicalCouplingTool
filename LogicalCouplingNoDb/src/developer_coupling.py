@@ -183,4 +183,4 @@ def run(repo_url, branch, commit_hash):
         shutil.rmtree('.temp/', ignore_errors=True)
 
     logger.info("Developer coupling tool finished")
-    return exit_code, message
+    return exit_code, message, []
