@@ -1,25 +1,21 @@
-import argparse
 import fnmatch
 import itertools
 import math
 import os
 import shutil
-import sys
 import traceback
-from operator import itemgetter
 
 import pandas
 import pandas as pd
 import pydriller
-from git import Repo
 
 import util
 from util import clone, checkout, initialize, root_calculator
 
 logger = util.setup_logging('logical_coupling')
 
-def load_previous_results(repo_name, path_to_repo, branch):
 
+def load_previous_results(repo_name, path_to_repo, branch):
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
 
@@ -31,7 +27,6 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
     if os.path.exists(file):
         logger.info(f"Previous results found")
-        logger.debug(f"Previous results found")
         data = pandas.read_csv(file)
         logger.debug(f"Previous results: {data}")
     else:
@@ -40,7 +35,6 @@ def load_previous_results(repo_name, path_to_repo, branch):
         file = os.path.relpath(file, os.getcwd())
         os.makedirs(file, exist_ok=True)
         logger.info("Created directory for results: " + file)
-        logger.debug("Created directory for results: " + file)
         data = pandas.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
 
     component_to_ignore = []
@@ -157,12 +151,11 @@ def alert_messages(increasing_data):
         elif row['NEW_LC_VALUE'] >= 5:
             message += f"The components  {row['COMPONENT 1']} and {row['COMPONENT 2']} are coupled: {row['NEW_LC_VALUE']}\n"
         else:
-           message += f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}\n"
+            message += f" Logical coupling between {row['COMPONENT 1']} and {row['COMPONENT 2']} increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']}\n"
     return message
 
 
 def save(data, repo_name):
-
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
     data.to_csv(file, index=False)
@@ -175,7 +168,6 @@ def run(repo_url, branch, commit_hash):
     try:
         exit_code = 0
         logger.info("Logical coupling tool started")
-        logger.debug("Logical coupling tool started")
         initialized_data_path = initialize()
         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
 
@@ -188,14 +180,12 @@ def run(repo_url, branch, commit_hash):
         path_to_cloned_repo = clone(repo_url)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
-        logger.debug(f"Cloned repo: {path_to_cloned_repo}")
 
         logger.info(f"Loading previous results")
 
         data, components_to_ignore = load_previous_results(repo_name, path_to_cloned_repo, branch)
 
         logger.info(f"Loaded previous results")
-        logger.debug(f"Loaded previous results")
         logger.debug(f"Data: {data}")
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
@@ -203,10 +193,8 @@ def run(repo_url, branch, commit_hash):
 
         if new_data.empty:
             logger.info("No new coupling found ")
-            logger.debug("No new coupling found ")
         else:
             logger.info("New coupling found ")
-            logger.debug("New coupling found ")
             exit_code = 1
 
         save(new_data, repo_name)
@@ -220,6 +208,7 @@ def run(repo_url, branch, commit_hash):
     except Exception as e:
         logger.error(e)
         logger.error(traceback.format_exc())
+        logger.info("Logical coupling tool finished with error")
         return -1, "Error in logical coupling tool"
 
     finally:

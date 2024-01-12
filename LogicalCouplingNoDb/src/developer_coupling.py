@@ -1,17 +1,11 @@
-import argparse
 import fnmatch
-import itertools
-import math
 import os
 import shutil
-import sys
 import traceback
-from operator import itemgetter
 
 import pandas
-import pandas as pd
 import pydriller
-from git import Repo
+
 import util
 from util import clone, checkout, initialize, root_calculator
 
@@ -33,7 +27,6 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
 
     else:
         logger.info("No previous results found")
-        logger.debug("No previous results found")
         os.makedirs(path_to_data, exist_ok=True)
         logger.debug("Created directory for results: " + os.path.abspath(path_to_data))
 
@@ -43,7 +36,6 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
     developer_to_ignore = []
     if os.path.exists(path_to_comp_ignore_file):
         logger.info("Components ignore file found")
-        logger.debug("Components ignore file found")
         with open(path_to_comp_ignore_file, 'r') as file:
             lines = file.readlines()
 
@@ -66,7 +58,6 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
     roots = []
     developer = ""
     logger.info(f"Analyzing commit {commit_hash} on branch {branch}")
-    logger.debug(f"Analyzing commit {commit_hash} on branch {branch}")
 
     for commit in pydriller.Repository(path_to_repo, single=commit_hash, only_in_branch=branch).traverse_commits():
 
@@ -133,7 +124,6 @@ def run(repo_url, branch, commit_hash):
     try:
         exit_code = 0
         logger.info("Logical coupling tool started")
-        logger.debug("Logical coupling tool started")
         initialized_data_path = initialize()
         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
 
@@ -149,7 +139,6 @@ def run(repo_url, branch, commit_hash):
         path_to_cloned_repo = clone(repo_url)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
-        logger.debug(f"Cloned repo: {path_to_cloned_repo}")
 
         path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
         path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
@@ -158,14 +147,12 @@ def run(repo_url, branch, commit_hash):
         logger.debug(f"Path to comp ignore file: {path_to_comp_ignore_file}")
 
         logger.info(f"Loading previous results")
-        logger.debug(f"Loading previous results")
         data, components_to_ignore, developers_to_ignore = load_previous_results(path_to_data,
                                                                                  path_to_cloned_repo,
                                                                                  branch,
                                                                                  path_to_dev_ignore_file,
                                                                                  path_to_comp_ignore_file)
         logger.info(f"Loaded previous results")
-        logger.debug(f"Loaded previous results")
         logger.debug(f"Data: {data}")
         logger.debug(f"Components to ignore: {components_to_ignore}")
         logger.debug(f"Developers to ignore: {developers_to_ignore}")
@@ -174,14 +161,12 @@ def run(repo_url, branch, commit_hash):
                                                   developers_to_ignore, data, path_to_data)
 
         logger.info(f"Analyzed actual commit")
-        logger.debug(f"Analyzed actual commit")
         logger.debug(f"New data: new_data")
         message = alert_message(new_data)
         logger.debug(f"Message: {message}")
 
         if not new_data.empty:
             logger.info("New coupling found")
-            logger.debug("New coupling found")
             exit_code = 1, message
 
     except Exception as e:
@@ -198,5 +183,4 @@ def run(repo_url, branch, commit_hash):
         shutil.rmtree('.temp/', ignore_errors=True)
 
     logger.info("Developer coupling tool finished")
-    logger.debug("Developer coupling tool finished")
     return exit_code, message
