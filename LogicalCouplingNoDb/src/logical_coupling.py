@@ -91,6 +91,11 @@ def analyze_commits(path_to_repo, branch, commits, to_ignore):
             lc_value.append(1)
 
         logger.info(f"Analyzed commit {commits} on branch {branch}")
+
+        if not combinations_sorted:
+            logger.debug("No new coupling found")
+            return pd.DataFrame()
+
         rows.append(
             {'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value, 'COMMIT': commit.hash})
 
@@ -205,19 +210,21 @@ def run(repo_url, branch, commit_hash):
 
         if new_data.empty:
             logger.info("No new coupling found ")
+            messages = ""
+            commits = []
         else:
             logger.info("New coupling found ")
             exit_code = 1
 
-        alert_data = alert(new_data, data)
-        logger.debug(f"Alert data: {alert_data}")
-        messages = alert_messages(alert_data)
-        commits = new_data['COMMIT'].unique()
-        new_data.drop('COMMIT', axis=1, inplace=True)
-        logger.debug(f"New Data: {new_data}")
-        merged_data = update_data(data, new_data)
-        save(merged_data, repo_name)
-        logger.debug(f"Messages: {messages}")
+            alert_data = alert(new_data, data)
+            logger.debug(f"Alert data: {alert_data}")
+            messages = alert_messages(alert_data)
+            commits = new_data['COMMIT'].unique()
+            new_data.drop('COMMIT', axis=1, inplace=True)
+            logger.debug(f"New Data: {new_data}")
+            merged_data = update_data(data, new_data)
+            save(merged_data, repo_name)
+            logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
 
         return exit_code, messages, commits
