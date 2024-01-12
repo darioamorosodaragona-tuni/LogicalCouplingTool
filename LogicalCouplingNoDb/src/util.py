@@ -42,6 +42,7 @@ def setup_logging(route_name):
     # Check if the logger already has handlers
 
     if not logger.hasHandlers():
+        os.makedirs(route_name, exist_ok=True)
         logger.setLevel(logging.DEBUG)
 
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
