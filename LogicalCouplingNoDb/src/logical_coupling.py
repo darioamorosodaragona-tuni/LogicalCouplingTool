@@ -223,7 +223,7 @@ def run(repo_url, branch, commit_hash):
         logger.error(e)
         logger.error(traceback.format_exc())
         logger.info("Logical coupling tool finished with error")
-        return -1, "Error in logical coupling tool"
+        return -1, "Error in logical coupling tool", []
 
     finally:
         logger.debug("Deleting temporary files")
