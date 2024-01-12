@@ -214,6 +214,7 @@ def run(repo_url, branch, commit_hash):
         messages = alert_messages(alert_data)
         commits = new_data['COMMIT'].unique()
         new_data.drop('COMMIT', axis=1, inplace=True)
+        logger.debug(f"New Data: {new_data}")
         merged_data = update_data(data, new_data)
         save(merged_data, repo_name)
         logger.debug(f"Messages: {messages}")
