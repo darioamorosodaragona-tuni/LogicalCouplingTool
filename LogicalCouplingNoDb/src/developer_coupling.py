@@ -59,7 +59,7 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
     developer = ""
     logger.info(f"Analyzing commit {commit_hash} on branch {branch}")
 
-    for commit in pydriller.Repository(path_to_repo, single=commit_hash, only_in_branch=branch).traverse_commits():
+    for commit in pydriller.Repository(path_to_repo, only_commits=commit_hash, only_in_branch=branch).traverse_commits():
 
         if commit.author.email in devs_to_ignore:
             logger.debug(f"Developer {commit.author.email} ignored")
