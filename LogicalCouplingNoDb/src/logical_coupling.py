@@ -142,11 +142,11 @@ def alert(data_extracted, previous_data):
     to_alert['LC_VALUE'] = to_alert['LC_VALUE_x'].combine_first(to_alert['LC_VALUE_y'])
     to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y'], axis=1)
 
-    logger.debug(f"Alert data: {to_alert}")
+    # logger.debug(f"Alert data: {to_alert}")
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
-                         'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE']})
+                         'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE'], 'COMMIT' : row['COMMIT']})
     return pd.DataFrame(new_rows)
 
 
