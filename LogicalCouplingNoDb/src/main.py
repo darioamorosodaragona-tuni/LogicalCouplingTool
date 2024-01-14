@@ -40,7 +40,7 @@ def run(function, git_url, branch, commits_list):
         result = {
             "exit_code": exit_code,
             "message": messages,
-            "commits": commits
+            "commits": ",".join(commits)
         }
         logger.debug(result)
         logger.info("Tool finished successfully")
