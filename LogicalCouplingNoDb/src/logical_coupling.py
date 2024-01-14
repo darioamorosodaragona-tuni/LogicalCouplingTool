@@ -40,7 +40,7 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
     if os.path.exists(commits_analyzed):
         logger.info(f"Previous commits analyzed found")
-        commits_analyzed = pandas.read_csv(file)
+        commits_analyzed_dataframe = pandas.read_csv(file)
         logger.debug(f"Previous results: {data}")
     else:
         logger.info(f"No previous commits found")
@@ -48,7 +48,9 @@ def load_previous_results(repo_name, path_to_repo, branch):
         file = os.path.relpath(file, os.getcwd())
         os.makedirs(file, exist_ok=True)
         logger.info("Created directory for results: " + file)
-        pandas.DataFrame(columns=['COMMITS ANALYZED']).to_csv(commits_analyzed, index=False)
+        commits_analyzed_dataframe = pandas.DataFrame(columns=['COMMITS ANALYZED'])
+        commits_analyzed_dataframe.to_csv(commits_analyzed, index=False)
+
 
     component_to_ignore = []
     logger.debug(f"Checking if ignore file exists: {ignore}")
@@ -61,7 +63,7 @@ def load_previous_results(repo_name, path_to_repo, branch):
         component_to_ignore.append('.lcignore')
         logger.debug(f"Components to ignore: {component_to_ignore}")
 
-    return data, component_to_ignore, commits_analyzed
+    return data, component_to_ignore, commits_analyzed_dataframe
 
 
 def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore):
@@ -70,8 +72,20 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
     commits_analyzed = []
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
-    for commit in pydriller.Repository(path_to_repo, from_commit=last_commit_analyzed, to_commit=commits[0],
-                                       only_in_branch=branch).traverse_commits():
+
+    if last_commit_analyzed is None:
+        logger.info("No previous commits analyzed")
+        logger.debug(f"Analyzing commits {commits} on branch {branch}")
+        repository = pydriller.Repository(path_to_repo, to_commit=commits[0],
+                                       only_in_branch=branch)
+
+    else:
+        logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
+        logger.debug(f"Analyzing commits {commits} on branch {branch}")
+        repository = pydriller.Repository(path_to_repo, from_commit=last_commit_analyzed, to_commit=commits[0],
+                                       only_in_branch=branch)
+
+    for commit in repository.traverse_commits():
 
         if commit.hash == last_commit_analyzed:
             logger.debug(f"Commit {commit.hash} already analyzed")
@@ -227,7 +241,7 @@ def run(repo_url, branch, commit_hash):
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
         if commits_analyzed.empty:
-            last_commit = commit_hash[0]
+            last_commit = None
         else:
             last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
 
