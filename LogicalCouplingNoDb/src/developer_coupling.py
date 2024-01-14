@@ -50,6 +50,9 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
         developer_to_ignore = [line.strip() for line in lines]
         logger.debug(f"Developers to ignore: {developer_to_ignore}")
 
+    component_to_ignore.append('.dev_comp_ignore')
+    component_to_ignore.append('.devignore')
+
     return result, component_to_ignore, developer_to_ignore
 
 
