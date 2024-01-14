@@ -243,7 +243,11 @@ def run(repo_url, branch, commit_hash):
         if commits_analyzed.empty:
             last_commit = None
         else:
+            logger.debug(f"Commits analyzed: {commits_analyzed}")
+            logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+
             last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
+
 
         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit, components_to_ignore)
 
