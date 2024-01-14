@@ -63,6 +63,8 @@ def load_previous_results(repo_name, path_to_repo, branch):
         component_to_ignore.append('.lcignore')
         logger.debug(f"Components to ignore: {component_to_ignore}")
 
+    logger.debug("Commits analyzed" + commits_analyzed_dataframe)
+
     return data, component_to_ignore, commits_analyzed_dataframe
 
 
