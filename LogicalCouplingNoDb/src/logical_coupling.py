@@ -227,7 +227,7 @@ def run(repo_url, branch, commit_hash):
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
         if commits_analyzed.empty:
-            last_commit = commit_hash
+            last_commit = commit_hash[0]
         else:
             last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
 
