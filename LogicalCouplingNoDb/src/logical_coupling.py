@@ -5,6 +5,7 @@ import os
 import shutil
 import traceback
 
+import git
 import pandas
 import pandas as pd
 import pydriller
@@ -51,7 +52,6 @@ def load_previous_results(repo_name, path_to_repo, branch):
         commits_analyzed_dataframe = pandas.DataFrame(columns=['COMMITS ANALYZED'])
         commits_analyzed_dataframe.to_csv(commits_analyzed, index=False)
 
-
     component_to_ignore = []
     logger.debug(f"Checking if ignore file exists: {ignore}")
     if os.path.exists(ignore):
@@ -72,20 +72,27 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
     result = []
     rows = []
     commits_analyzed = []
+    repo = git.Repo(path_to_repo)
+
+
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
 
     if last_commit_analyzed is None:
+
         logger.info("No previous commits analyzed")
         logger.debug(f"Analyzing commits {commits} on branch {branch}")
         repository = pydriller.Repository(path_to_repo, to_commit=commits[0],
-                                       only_in_branch=branch)
+                                          only_in_branch=branch)
 
     else:
         logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
         logger.debug(f"Analyzing commits {commits} on branch {branch}")
-        repository = pydriller.Repository(path_to_repo, from_commit=last_commit_analyzed, to_commit=commits[0],
-                                       only_in_branch=branch)
+        commits_to_analyze = repo.git.execute(['git', 'rev-list', '--ancestry-path',
+                                               '%s..%s' % (last_commit_analyzed, commits[0])]).split()
+        logger.debug(f"Commits to analyze: {commits_to_analyze}")
+        repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze,
+                                          only_in_branch=branch)
 
     for commit in repository.traverse_commits():
 
@@ -252,8 +259,8 @@ def run(repo_url, branch, commit_hash):
 
             last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
 
-
-        new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit, components_to_ignore)
+        new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
+                                                         components_to_ignore)
 
         if new_data.empty:
             logger.info("No new coupling found ")
@@ -270,7 +277,7 @@ def run(repo_url, branch, commit_hash):
             new_data.drop('COMMIT', axis=1, inplace=True)
             logger.debug(f"New Data: {new_data}")
             merged_data = update_data(data, new_data)
-            save(merged_data, repo_name, new_commits_analyzed, commits_analyzed )
+            save(merged_data, repo_name, new_commits_analyzed, commits_analyzed)
             logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
 
