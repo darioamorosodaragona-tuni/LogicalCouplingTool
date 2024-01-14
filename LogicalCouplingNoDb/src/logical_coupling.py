@@ -97,6 +97,8 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
         for files in modified_files:
             logger.debug(f"Modified file: {files.new_path}")
+            if files.new_path is None:
+                continue
             if not any(fnmatch.fnmatch(files.new_path, pattern) for pattern in to_ignore):
                 result.append(files.new_path)
             else:
