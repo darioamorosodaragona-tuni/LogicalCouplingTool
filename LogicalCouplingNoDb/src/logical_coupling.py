@@ -82,22 +82,15 @@ def analyze_commits(path_to_repo, branch, commits, to_ignore):
         logger.debug(f"Combinations (unsorted): {combinations}")
         combinations_sorted = sorted(combinations)
         logger.debug(f"Combinations (sorted): {combinations_sorted}")
-        component_1 = []
-        component_2 = []
-        lc_value = []
+
         for comb in combinations_sorted:
-            component_1.append(convertFromNumber(comb[0]))
-            component_2.append(convertFromNumber(comb[1]))
-            lc_value.append(1)
+            rows.append(
+                {'COMPONENT 1': comb[0], 'COMPONENT 2': comb[1], 'LC_VALUE': 1, 'COMMIT': commit.hash})
 
         logger.info(f"Analyzed commit {commits} on branch {branch}")
 
         if not combinations_sorted:
-            logger.debug("No new coupling found")
-            return pd.DataFrame()
-
-        rows.append(
-            {'COMPONENT 1': component_1, 'COMPONENT 2': component_2, 'LC_VALUE': lc_value, 'COMMIT': commit.hash})
+            logger.debug("No new coupling found in commit " + commit.hash)
 
     return pd.DataFrame(rows)
 
@@ -151,7 +144,7 @@ def alert(data_extracted, previous_data):
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
-                         'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE'], 'COMMIT' : row['COMMIT']})
+                         'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE'], 'COMMIT': row['COMMIT']})
     return pd.DataFrame(new_rows)
 
 
