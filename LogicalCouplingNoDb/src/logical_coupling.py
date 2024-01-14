@@ -40,8 +40,8 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
     if os.path.exists(commits_analyzed):
         logger.info(f"Previous commits analyzed found")
-        commits_analyzed_dataframe = pandas.read_csv(file)
-        logger.debug(f"Previous results: {data}")
+        commits_analyzed_dataframe = pandas.read_csv(commits_analyzed)
+        logger.debug(f"Previous results: {commits_analyzed_dataframe}")
     else:
         logger.info(f"No previous commits found")
         file = f'.data/{repo_name}'
