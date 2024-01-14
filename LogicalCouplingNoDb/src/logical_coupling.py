@@ -16,6 +16,7 @@ logger = util.setup_logging('logical_coupling')
 
 
 def load_previous_results(repo_name, path_to_repo, branch):
+    commits_analyzed = f'.data/{repo_name}/analyzed.csv'
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
 
@@ -37,6 +38,18 @@ def load_previous_results(repo_name, path_to_repo, branch):
         logger.info("Created directory for results: " + file)
         data = pandas.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
 
+    if os.path.exists(commits_analyzed):
+        logger.info(f"Previous commits analyzed found")
+        commits_analyzed = pandas.read_csv(file)
+        logger.debug(f"Previous results: {data}")
+    else:
+        logger.info(f"No previous commits found")
+        file = f'.data/{repo_name}'
+        file = os.path.relpath(file, os.getcwd())
+        os.makedirs(commits_analyzed, exist_ok=True)
+        logger.info("Created directory for results: " + file)
+        commits_analyzed = pandas.DataFrame(columns=['COMMITS ANALYZED'])
+
     component_to_ignore = []
     logger.debug(f"Checking if ignore file exists: {ignore}")
     if os.path.exists(ignore):
@@ -48,15 +61,21 @@ def load_previous_results(repo_name, path_to_repo, branch):
         component_to_ignore.append('.lcignore')
         logger.debug(f"Components to ignore: {component_to_ignore}")
 
-    return data, component_to_ignore
+    return data, component_to_ignore, commits_analyzed
 
 
-def analyze_commits(path_to_repo, branch, commits, to_ignore):
+def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore):
     result = []
     rows = []
+    commits_analyzed = []
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
-    for commit in pydriller.Repository(path_to_repo, only_commits=commits, only_in_branch=branch).traverse_commits():
+    for commit in pydriller.Repository(path_to_repo, from_commit=last_commit_analyzed, to_commit=commits[0],
+                                       only_in_branch=branch).traverse_commits():
+
+        if commit.hash == last_commit_analyzed:
+            logger.debug(f"Commit {commit.hash} already analyzed")
+            continue
 
         modified_files = commit.modified_files
 
@@ -85,14 +104,17 @@ def analyze_commits(path_to_repo, branch, commits, to_ignore):
 
         for comb in combinations_sorted:
             rows.append(
-                {'COMPONENT 1': comb[0], 'COMPONENT 2': comb[1], 'LC_VALUE': 1, 'COMMIT': commit.hash})
+                {'COMPONENT 1': convertFromNumber(comb[0]), 'COMPONENT 2': convertFromNumber(comb[1]), 'LC_VALUE': 1,
+                 'COMMIT': commit.hash})
 
         logger.info(f"Analyzed commit {commits} on branch {branch}")
 
         if not combinations_sorted:
             logger.debug("No new coupling found in commit " + commit.hash)
 
-    return pd.DataFrame(rows)
+        commits_analyzed.append(commit.hash)
+
+    return pd.DataFrame(rows), commits_analyzed
 
 
 def convertToNumber(s):
@@ -165,10 +187,15 @@ def alert_messages(increasing_data):
     return message
 
 
-def save(data, repo_name):
+def save(data, repo_name, new_commits_analyzed, commits_analyzed):
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
     data.to_csv(file, index=False)
+    file_commits = f'.data/{repo_name}/analyzed.csv'
+    file_commits = os.path.relpath(file_commits, os.getcwd())
+    new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
+    commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])
+    commits_analyzed.to_csv(file_commits, index=False)
 
 
 def run(repo_url, branch, commit_hash):
@@ -193,13 +220,18 @@ def run(repo_url, branch, commit_hash):
 
         logger.info(f"Loading previous results")
 
-        data, components_to_ignore = load_previous_results(repo_name, path_to_cloned_repo, branch)
+        data, components_to_ignore, commits_analyzed = load_previous_results(repo_name, path_to_cloned_repo, branch)
 
         logger.info(f"Loaded previous results")
         logger.debug(f"Data: {data}")
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
-        new_data = analyze_commits(path_to_cloned_repo, branch, commit_hash, components_to_ignore)
+        if commits_analyzed.empty:
+            last_commit = commit_hash
+        else:
+            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
+
+        new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit, components_to_ignore)
 
         if new_data.empty:
             logger.info("No new coupling found ")
@@ -216,7 +248,7 @@ def run(repo_url, branch, commit_hash):
             new_data.drop('COMMIT', axis=1, inplace=True)
             logger.debug(f"New Data: {new_data}")
             merged_data = update_data(data, new_data)
-            save(merged_data, repo_name)
+            save(merged_data, repo_name, new_commits_analyzed, commits_analyzed )
             logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
 
