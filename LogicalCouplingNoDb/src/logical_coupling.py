@@ -69,7 +69,6 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
 
 def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore):
-    result = []
     rows = []
     commits_analyzed = []
     repo = git.Repo(path_to_repo)
@@ -95,6 +94,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
                                           only_in_branch=branch)
 
     for commit in repository.traverse_commits():
+        result = []
 
         if commit.hash == last_commit_analyzed:
             logger.debug(f"Commit {commit.hash} already analyzed")
