@@ -46,9 +46,9 @@ def load_previous_results(repo_name, path_to_repo, branch):
         logger.info(f"No previous commits found")
         file = f'.data/{repo_name}'
         file = os.path.relpath(file, os.getcwd())
-        os.makedirs(commits_analyzed, exist_ok=True)
+        os.makedirs(file, exist_ok=True)
         logger.info("Created directory for results: " + file)
-        commits_analyzed = pandas.DataFrame(columns=['COMMITS ANALYZED'])
+        pandas.DataFrame(columns=['COMMITS ANALYZED']).to_csv(commits_analyzed, index=False)
 
     component_to_ignore = []
     logger.debug(f"Checking if ignore file exists: {ignore}")
