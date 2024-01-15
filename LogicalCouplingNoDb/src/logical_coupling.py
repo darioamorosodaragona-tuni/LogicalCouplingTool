@@ -174,9 +174,15 @@ def alert(data_extracted, previous_data):
     to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
         data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
 
+    logger.debug(f"Previous data: {previous_data}")
+    logger.debug(f"Data extracted: {data_extracted}")
+    logger.debug(f"To alert: {to_alert}")
+
     new_coupling = data_extracted[~data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
         previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
     new_coupling['LC_VALUE'] = 0
+
+    logger.debug(f"New coupling: {new_coupling}")
 
     to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
     to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
@@ -184,14 +190,21 @@ def alert(data_extracted, previous_data):
     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
 
+
+
     to_alert['LC_VALUE'] = to_alert['LC_VALUE_x'].combine_first(to_alert['LC_VALUE_y'])
     to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y'], axis=1)
+
+    logger.debug(f"To alert: {to_alert}")
 
     # logger.debug(f"Alert data: {to_alert}")
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
                          'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE'], 'COMMIT': row['COMMIT']})
+
+    logger.debug(f"New rows: {new_rows}")
+    logger.debug(f"New rows (dataframe): {pd.DataFrame(new_rows)}")
     return pd.DataFrame(new_rows)
 
 
