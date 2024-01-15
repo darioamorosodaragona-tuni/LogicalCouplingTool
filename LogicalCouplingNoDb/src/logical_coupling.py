@@ -132,7 +132,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
                 {'COMPONENT 1': convertFromNumber(comb[0]), 'COMPONENT 2': convertFromNumber(comb[1]), 'LC_VALUE': 1,
                  'COMMIT': commit.hash})
 
-        logger.info(f"Analyzed commit {commits} on branch {branch}")
+        logger.info(f"Analyzed commit {commit.hash} on branch {branch}")
 
         if not combinations_sorted:
             logger.debug("No new coupling found in commit " + commit.hash)
@@ -170,9 +170,11 @@ def update_data(data, new_data):
 def alert(data_extracted, previous_data):
     new_rows = []
     # data = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'NEW_LC_VALUE', 'OLD_LC_VALUE'])
+    to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT']],
+                           on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
 
-    to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
-        data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
+    # to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
+    #     data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
 
     logger.debug(f"Previous data: {previous_data}")
     logger.debug(f"Data extracted: {data_extracted}")
@@ -197,7 +199,6 @@ def alert(data_extracted, previous_data):
 
     logger.debug(f"To alert: {to_alert}")
 
-    # logger.debug(f"Alert data: {to_alert}")
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
