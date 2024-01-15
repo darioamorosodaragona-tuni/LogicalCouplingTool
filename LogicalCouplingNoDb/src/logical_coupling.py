@@ -209,7 +209,7 @@ def alert(data_extracted, previous_data):
     to_alert['LC_VALUE_NEW'] = to_alert['LC_VALUE_NEW_x'].combine_first(to_alert['LC_VALUE_NEW_y'])
     to_alert['COMMIT'] = to_alert['COMMIT_x'].combine_first(to_alert['COMMIT_y'])
 
-    to_alert = to_alert.drop(['LC_VALUE_NEW_x', 'LC_VALUE_NEW_y','LC_VALUE_OLD_x', 'LC_VALUE_OLD_y', 'COMMIT_x', 'COMMIT_y'], axis=1)
+    to_alert = to_alert.drop(['LC_VALUE_NEW_x', 'LC_VALUE_NEW_y','LC_VALUE_OLD_x', 'LC_VALUE_OLD_y', 'COMMIT_x', 'COMMIT_y', 'LC_VALUE'], axis=1)
 
     logger.debug(f"To alert: {to_alert}")
 
@@ -300,7 +300,7 @@ def run(repo_url, branch, commit_hash):
             alert_data = alert(new_data, data)
             logger.debug(f"Alert data: {alert_data}")
             messages = alert_messages(alert_data)
-            commits = new_data['COMMIT'].unique()
+            commits = new_data['COMMIT']
             new_data.drop('COMMIT', axis=1, inplace=True)
             logger.debug(f"New Data: {new_data}")
             merged_data = update_data(data, new_data)
@@ -308,7 +308,7 @@ def run(repo_url, branch, commit_hash):
             logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
 
-        return exit_code, messages, commits
+        return exit_code, messages, []
 
     except Exception as e:
         logger.error(e)
