@@ -73,8 +73,6 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
     commits_analyzed = []
     repo = git.Repo(path_to_repo)
 
-
-
     logger.info(f"Analyzing commits {commits} on branch {branch}")
 
     if last_commit_analyzed is None:
@@ -171,7 +169,7 @@ def alert(data_extracted, previous_data):
     new_rows = []
     # data = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'NEW_LC_VALUE', 'OLD_LC_VALUE'])
     to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT']],
-                           on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
+                        on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
 
     # to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
     #     data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
@@ -192,13 +190,12 @@ def alert(data_extracted, previous_data):
     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
 
-
-
     to_alert['LC_VALUE'] = to_alert['LC_VALUE_x'].combine_first(to_alert['LC_VALUE_y'])
-    to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y'], axis=1)
+    to_alert['COMMIT'] = to_alert['COMMIT_x'].combine_first(to_alert['COMMIT_y'])
+
+    to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y', 'COMMIT_x', 'COMMIT_y'], axis=1)
 
     logger.debug(f"To alert: {to_alert}")
-
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
