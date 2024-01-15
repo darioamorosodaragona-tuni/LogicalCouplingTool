@@ -115,6 +115,10 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             components.append(root_calculator(file_path))
         logger.debug(f"Components: {components}")
 
+        components = [hash(component) for component in components]
+
+        combinations = list(itertools.combinations(components, 2))
+
         components.sort()
         components = set(components)
         logger.debug(f"Components (string): {components}")
@@ -122,7 +126,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         logger.debug(f"Components (number): {components}")
         combinations = list(itertools.combinations(components, 2))
         logger.debug(f"Combinations (unsorted): {combinations}")
-        combinations_sorted = sorted(combinations)
+        combinations_sorted = [tuple(sorted(comb)) for comb in combinations]
         logger.debug(f"Combinations (sorted): {combinations_sorted}")
 
         for comb in combinations_sorted:
