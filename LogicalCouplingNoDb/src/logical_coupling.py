@@ -177,8 +177,12 @@ def update_data(data, new_data):
 def alert(data_extracted, previous_data):
     new_rows = []
     # data = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'NEW_LC_VALUE', 'OLD_LC_VALUE'])
-    to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT']],
+    to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT', 'LC_VALUE']],
                         on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
+
+    to_alert["LC_VALUE_NEW"] = to_alert["LC_VALUE_y"]
+    to_alert["LC_VALUE_OLD"] = to_alert["LC_VALUE_x"]
+    to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y'], axis=1)
 
     # to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
     #     data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
@@ -189,7 +193,9 @@ def alert(data_extracted, previous_data):
 
     new_coupling = data_extracted[~data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
         previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
-    new_coupling['LC_VALUE'] = 0
+    new_coupling['LC_VALUE_OLD'] = 0
+    new_coupling['LC_VALUE_NEW'] = 1
+
 
     logger.debug(f"New coupling: {new_coupling}")
 
@@ -199,16 +205,17 @@ def alert(data_extracted, previous_data):
     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
 
-    to_alert['LC_VALUE'] = to_alert['LC_VALUE_x'].combine_first(to_alert['LC_VALUE_y'])
+    to_alert['LC_VALUE_OLD'] = to_alert['LC_VALUE_OLD_x'].combine_first(to_alert['LC_VALUE_OLD_y'])
+    to_alert['LC_VALUE_NEW'] = to_alert['LC_VALUE_NEW_x'].combine_first(to_alert['LC_VALUE_NEW_y'])
     to_alert['COMMIT'] = to_alert['COMMIT_x'].combine_first(to_alert['COMMIT_y'])
 
-    to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y', 'COMMIT_x', 'COMMIT_y'], axis=1)
+    to_alert = to_alert.drop(['LC_VALUE_NEW_x', 'LC_VALUE_NEW_y','LC_VALUE_OLD_x', 'LC_VALUE_OLD_y', 'COMMIT_x', 'COMMIT_y'], axis=1)
 
     logger.debug(f"To alert: {to_alert}")
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
-                         'NEW_LC_VALUE': row['LC_VALUE'] + 1, 'OLD_LC_VALUE': row['LC_VALUE'], 'COMMIT': row['COMMIT']})
+                         'NEW_LC_VALUE': row['LC_VALUE_NEW'] + row['LC_VALUE_OLD'], 'OLD_LC_VALUE': row['LC_VALUE_OLD'], 'COMMIT': row['COMMIT']})
 
     logger.debug(f"New rows: {new_rows}")
     logger.debug(f"New rows (dataframe): {pd.DataFrame(new_rows)}")
