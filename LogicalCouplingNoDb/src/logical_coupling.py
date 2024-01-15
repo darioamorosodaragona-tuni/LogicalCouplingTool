@@ -115,9 +115,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             components.append(root_calculator(file_path))
         logger.debug(f"Components: {components}")
 
-        components = [hash(component) for component in components]
 
-        combinations = list(itertools.combinations(components, 2))
 
         components.sort()
         components = set(components)
