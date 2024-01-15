@@ -136,8 +136,15 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             logger.debug("No new coupling found in commit " + commit.hash)
 
         commits_analyzed.append(commit.hash)
+    result = pd.DataFrame(rows)
+    grouped_df = result.groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
+        'LC_VALUE': 'sum',
+        'COMMIT': lambda x: list(x)
+    }).reset_index()
 
-    return pd.DataFrame(rows), commits_analyzed
+    # Rename the 'LC_VALUE' column to the original name
+    grouped_df = grouped_df.rename(columns={'LC_VALUE': 'LC_VALUE'})
+    return grouped_df, commits_analyzed
 
 
 def convertToNumber(s):
