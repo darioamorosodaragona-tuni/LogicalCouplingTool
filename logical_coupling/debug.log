@@ -1,0 +1,22 @@
+2024-01-16 17:29:05 - DEBUG - Previous data:   COMPONENT 1 COMPONENT 2  LC_VALUE
+0           A           B         1
+1           B           C         2
+2024-01-16 17:29:05 - DEBUG - Data extracted:   COMPONENT 1 COMPONENT 2  LC_VALUE COMMIT
+0           B           D         3    abc
+1           C           E         4    def
+2024-01-16 17:29:05 - DEBUG - To alert: Empty DataFrame
+Columns: [COMPONENT 1, COMPONENT 2, COMMIT, LC_VALUE_NEW, LC_VALUE_OLD]
+Index: []
+2024-01-16 17:29:05 - DEBUG - New coupling:   COMPONENT 1 COMPONENT 2  LC_VALUE COMMIT  LC_VALUE_OLD  LC_VALUE_NEW
+0           B           D         3    abc             0             1
+1           C           E         4    def             0             1
+2024-01-16 17:29:05 - DEBUG - To alert:   COMPONENT 1 COMPONENT 2  LC_VALUE_OLD  LC_VALUE_NEW COMMIT
+0           B           D             0             1    abc
+1           C           E             0             1    def
+2024-01-16 17:29:05 - DEBUG - New rows: [{'COMPONENT 1': 'B', 'COMPONENT 2': 'D', 'NEW_LC_VALUE': 1, 'OLD_LC_VALUE': 0, 'COMMIT': 'abc'}, {'COMPONENT 1': 'C', 'COMPONENT 2': 'E', 'NEW_LC_VALUE': 1, 'OLD_LC_VALUE': 0, 'COMMIT': 'def'}]
+2024-01-16 17:29:05 - DEBUG - New rows (dataframe):   COMPONENT 1 COMPONENT 2  NEW_LC_VALUE  OLD_LC_VALUE COMMIT
+0           B           D             1             0    abc
+1           C           E             1             0    def
+2024-01-16 17:29:05 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-16 17:29:05 - DEBUG - Path to repo: /var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpvte7x0mu
+2024-01-16 17:29:05 - DEBUG - Checking out branch main

@@ -10,13 +10,26 @@ import pandas
 import pandas as pd
 import pydriller
 
-import util
-from util import clone, checkout, initialize, root_calculator
+from .util import *
 
-logger = util.setup_logging('logical_coupling')
+logger = setup_logging('logical_coupling')
 
 
 def load_previous_results(repo_name, path_to_repo, branch):
+    """
+    Load previous logical coupling results from CSV files.
+
+    Parameters:
+    - repo_name (str): Name of the repository.
+    - path_to_repo (str): Path to the local repository.
+    - branch (str): Branch name.
+
+    Returns:
+    - data (pd.DataFrame): DataFrame containing previous logical coupling data.
+    - component_to_ignore (list): List of components to ignore.
+    - commits_analyzed_dataframe (pd.DataFrame): DataFrame containing previously analyzed commits.
+    """
+
     commits_analyzed = f'.data/{repo_name}/analyzed.csv'
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
@@ -69,6 +82,20 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
 
 def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore):
+    """
+        Analyze commits for logical coupling.
+
+        Parameters:
+        - path_to_repo (str): Path to the local repository.
+        - branch (str): Branch name.
+        - commits (list): List of commit hashes to analyze.
+        - last_commit_analyzed (str): Last commit already analyzed.
+        - to_ignore (list): List of components to ignore.
+
+        Returns:
+        - grouped_df (pd.DataFrame): Grouped DataFrame with logical coupling results.
+        - commits_analyzed (list): List of commits analyzed during the process.
+        """
     rows = []
     commits_analyzed = []
     repo = git.Repo(path_to_repo)
@@ -115,8 +142,6 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             components.append(root_calculator(file_path))
         logger.debug(f"Components: {components}")
 
-
-
         components.sort()
         components = set(components)
         logger.debug(f"Components (string): {components}")
@@ -150,19 +175,42 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
 
 def convertToNumber(s):
+    """
+       Convert a string to a unique numeric value.
+
+       Parameters:
+       - s (str): Input string.
+
+       Returns:
+       - int: Numeric representation of the input string.
+       """
     return int.from_bytes(s.encode(), 'little')
 
 
 def convertFromNumber(n):
+    """
+       Convert a numeric value back to its original string representation.
+
+       Parameters:
+       - n (int): Numeric value.
+
+       Returns:
+       - str: Original string representation.
+       """
     return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
 
 
 def update_data(data, new_data):
-    # merged_df = pd.merge(data, new_data, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
-    # merged_df['LC_VALUE'] = merged_df['LC_VALUE_x'].fillna(0) + merged_df['LC_VALUE_y'].fillna(0)
-    #
-    # # Drop unnecessary columns
-    # merged_df = merged_df[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE']]
+    """
+        Update the logical coupling data with new analysis results.
+
+        Parameters:
+        - data (pd.DataFrame): Existing logical coupling data.
+        - new_data (pd.DataFrame): New logical coupling data to be merged.
+
+        Returns:
+        - merged_df (pd.DataFrame): Merged DataFrame containing updated logical coupling data.
+        """
 
     merged_df = pd.merge(data, new_data, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
     merged_df['LC_VALUE'] = merged_df['LC_VALUE_x'].fillna(0) + merged_df['LC_VALUE_y'].fillna(0)
@@ -175,17 +223,23 @@ def update_data(data, new_data):
 
 
 def alert(data_extracted, previous_data):
+    """
+       Identify and alert about changes in logical coupling.
+
+       Parameters:
+       - data_extracted (pd.DataFrame): Newly extracted logical coupling data.
+       - previous_data (pd.DataFrame): Previous logical coupling data.
+
+       Returns:
+       - alert_df (pd.DataFrame): DataFrame containing alert information.
+       """
     new_rows = []
-    # data = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'NEW_LC_VALUE', 'OLD_LC_VALUE'])
     to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT', 'LC_VALUE']],
                         on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
 
     to_alert["LC_VALUE_NEW"] = to_alert["LC_VALUE_y"]
     to_alert["LC_VALUE_OLD"] = to_alert["LC_VALUE_x"]
     to_alert = to_alert.drop(['LC_VALUE_x', 'LC_VALUE_y'], axis=1)
-
-    # to_alert = previous_data[previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1).isin(
-    #     data_extracted[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
 
     logger.debug(f"Previous data: {previous_data}")
     logger.debug(f"Data extracted: {data_extracted}")
@@ -195,7 +249,6 @@ def alert(data_extracted, previous_data):
         previous_data[['COMPONENT 1', 'COMPONENT 2']].apply(tuple, axis=1))]
     new_coupling['LC_VALUE_OLD'] = 0
     new_coupling['LC_VALUE_NEW'] = 1
-
 
     logger.debug(f"New coupling: {new_coupling}")
 
@@ -209,13 +262,16 @@ def alert(data_extracted, previous_data):
     to_alert['LC_VALUE_NEW'] = to_alert['LC_VALUE_NEW_x'].combine_first(to_alert['LC_VALUE_NEW_y'])
     to_alert['COMMIT'] = to_alert['COMMIT_x'].combine_first(to_alert['COMMIT_y'])
 
-    to_alert = to_alert.drop(['LC_VALUE_NEW_x', 'LC_VALUE_NEW_y','LC_VALUE_OLD_x', 'LC_VALUE_OLD_y', 'COMMIT_x', 'COMMIT_y', 'LC_VALUE'], axis=1)
+    to_alert = to_alert.drop(
+        ['LC_VALUE_NEW_x', 'LC_VALUE_NEW_y', 'LC_VALUE_OLD_x', 'LC_VALUE_OLD_y', 'COMMIT_x', 'COMMIT_y', 'LC_VALUE'],
+        axis=1)
 
     logger.debug(f"To alert: {to_alert}")
 
     for index, row in to_alert.iterrows():
         new_rows.append({'COMPONENT 1': row['COMPONENT 1'], 'COMPONENT 2': row['COMPONENT 2'],
-                         'NEW_LC_VALUE': row['LC_VALUE_NEW'] + row['LC_VALUE_OLD'], 'OLD_LC_VALUE': row['LC_VALUE_OLD'], 'COMMIT': row['COMMIT']})
+                         'NEW_LC_VALUE': row['LC_VALUE_NEW'] + row['LC_VALUE_OLD'], 'OLD_LC_VALUE': row['LC_VALUE_OLD'],
+                         'COMMIT': row['COMMIT']})
 
     logger.debug(f"New rows: {new_rows}")
     logger.debug(f"New rows (dataframe): {pd.DataFrame(new_rows)}")
@@ -223,6 +279,15 @@ def alert(data_extracted, previous_data):
 
 
 def alert_messages(increasing_data):
+    """
+       Generate alert messages based on changes in logical coupling.
+
+       Parameters:
+       - increasing_data (pd.DataFrame): DataFrame containing increased logical coupling information.
+
+       Returns:
+       - str: Generated alert messages.
+       """
     message = ""
     commit = ""
     for index, row in increasing_data.iterrows():
@@ -240,6 +305,15 @@ def alert_messages(increasing_data):
 
 
 def save(data, repo_name, new_commits_analyzed, commits_analyzed):
+    """
+       Save logical coupling data and analyzed commits to CSV files.
+
+       Parameters:
+       - data (pd.DataFrame): Logical coupling data to be saved.
+       - repo_name (str): Name of the repository.
+       - new_commits_analyzed (list): Newly analyzed commits.
+       - commits_analyzed (pd.DataFrame): Previously analyzed commits.
+       """
     file = f'.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
     data.to_csv(file, index=False)
@@ -251,8 +325,21 @@ def save(data, repo_name, new_commits_analyzed, commits_analyzed):
 
 
 def run(repo_url, branch, commit_hash):
+    """
+      Execute the logical coupling tool on a specific repository, branch, and commit.
+
+      Parameters:
+      - repo_url (str): URL of the repository.
+      - branch (str): Branch name.
+      - commit_hash (str): Commit hash to analyze.
+
+      Returns:
+      - exit_code (int): Exit code indicating coupling detected (1) or no coupling detected (0).
+      - messages (str): Messages indicating coupling detected or empty string if no coupling detected.
+      - commits (list): commits in which coupling was detected.
+      """
     global logger
-    logger = util.setup_logging('logical_coupling')
+    logger = setup_logging('logical_coupling')
 
     try:
         exit_code = 0
