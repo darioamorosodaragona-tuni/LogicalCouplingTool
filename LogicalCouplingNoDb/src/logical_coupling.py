@@ -10,9 +10,10 @@ import pandas
 import pandas as pd
 import pydriller
 
-from .util import *
 
-logger = setup_logging('logical_coupling')
+from LogicalCouplingNoDb.src import util
+
+logger = util.setup_logging('logical_coupling')
 
 
 def load_previous_results(repo_name, path_to_repo, branch):
@@ -36,7 +37,7 @@ def load_previous_results(repo_name, path_to_repo, branch):
 
     logger.info(f"Loading previous results from {file}")
 
-    checkout(path_to_repo, branch, logger)
+    util.checkout(path_to_repo, branch, logger)
 
     ignore = f'{path_to_repo}/.lcignore'
 
@@ -98,7 +99,6 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         """
     rows = []
     commits_analyzed = []
-    repo = git.Repo(path_to_repo)
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
 
@@ -110,6 +110,13 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
                                           only_in_branch=branch)
 
     else:
+        if last_commit_analyzed in commits:
+            logger.debug(f"Last commit analyzed {last_commit_analyzed} is in commits {commits}")
+            commits.remove(last_commit_analyzed)
+            # commits = commits[commits.index(last_commit_analyzed) + 1:]
+            logger.debug(f"Commits to analyze: {commits}")
+
+        repo = git.Repo(path_to_repo)
         logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
         logger.debug(f"Analyzing commits {commits} on branch {branch}")
         commits_to_analyze = repo.git.execute(['git', 'rev-list', '--ancestry-path',
@@ -121,9 +128,9 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
     for commit in repository.traverse_commits():
         result = []
 
-        if commit.hash == last_commit_analyzed:
-            logger.debug(f"Commit {commit.hash} already analyzed")
-            continue
+        # if commit.hash == last_commit_analyzed:
+        #     logger.debug(f"Commit {commit.hash} already analyzed")
+        #     continue
 
         modified_files = commit.modified_files
 
@@ -139,7 +146,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         # components = [root_calculator(file_path) for file_path in result]
         components = []
         for file_path in result:
-            components.append(root_calculator(file_path))
+            components.append(util.root_calculator(file_path))
         logger.debug(f"Components: {components}")
 
         components.sort()
@@ -164,6 +171,11 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
         commits_analyzed.append(commit.hash)
     result = pd.DataFrame(rows)
+
+    if result.empty:
+        logger.info("No new coupling found")
+        return result, commits_analyzed
+
     grouped_df = result.groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
         'LC_VALUE': 'sum',
         'COMMIT': lambda x: list(x)
@@ -339,12 +351,12 @@ def run(repo_url, branch, commit_hash):
       - commits (list): commits in which coupling was detected.
       """
     global logger
-    logger = setup_logging('logical_coupling')
+    logger = util.setup_logging('logical_coupling')
 
     try:
         exit_code = 0
         logger.info("Logical coupling tool started")
-        initialized_data_path = initialize()
+        initialized_data_path = util.initialize()
         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
 
         commit_hash = commit_hash
@@ -353,7 +365,7 @@ def run(repo_url, branch, commit_hash):
         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
         logger.debug(f"Repo name: {repo_name}")
 
-        path_to_cloned_repo = clone(repo_url)
+        path_to_cloned_repo = util.clone(repo_url)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
 

@@ -48,6 +48,8 @@ class TestCalculator(unittest.TestCase):
         self.assertTrue(df_expected.equals(result), "Analyze actual commit failed.")
         shutil.rmtree(self.path)
 
+
+
     def test_analyze_actual_commit_inverse_order(self):
 
             # rorepo is a Repo instance pointing to the git-python repository.
