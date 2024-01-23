@@ -358,7 +358,7 @@ class TestLogicalCouplingTool(unittest.TestCase):
         self.assertEqual(merged_data.iloc[0]['LC_VALUE'], 1)
         self.assertEqual(merged_data.iloc[3]['LC_VALUE'], 4)
 
-    def test_alert(self):
+    def test_alert_new_rows(self):
         # Create dummy dataframes
         previous_data = pd.DataFrame({'COMPONENT 1': ['A', 'B'], 'COMPONENT 2': ['B', 'C'], 'LC_VALUE': [1, 2]})
         data_extracted = pd.DataFrame(
@@ -368,8 +368,52 @@ class TestLogicalCouplingTool(unittest.TestCase):
         alert_data = alert(data_extracted, previous_data)
 
         self.assertEqual(len(alert_data), 2)
+        self.assertTrue({"B", "C"}.issubset(set(alert_data['COMPONENT 1'].tolist())))
+        self.assertTrue({"D", "E"}.issubset(set(alert_data['COMPONENT 2'].tolist())))
+
         self.assertEqual(alert_data.iloc[0]['NEW_LC_VALUE'], 1)
         self.assertEqual(alert_data.iloc[1]['OLD_LC_VALUE'], 0)
+
+    def test_alert_update_rows(self):
+        # Create dummy dataframes
+        previous_data = pd.DataFrame({'COMPONENT 1': ['A', 'B'], 'COMPONENT 2': ['B', 'C'], 'LC_VALUE': [1, 2]})
+        data_extracted = pd.DataFrame(
+            {'COMPONENT 1': ['A', 'B'], 'COMPONENT 2': ['B', 'C'], 'LC_VALUE': [3, 4], 'COMMIT': ['abc', 'def']})
+
+        # Test the alert function
+        alert_data = alert(data_extracted, previous_data)
+
+        self.assertEqual(len(alert_data), 2)
+
+
+        self.assertEqual(alert_data.iloc[0]['NEW_LC_VALUE'], 4)
+        self.assertEqual(alert_data.iloc[1]['NEW_LC_VALUE'], 6)
+
+        self.assertEqual(alert_data.iloc[0]['OLD_LC_VALUE'], 1)
+        self.assertEqual(alert_data.iloc[1]['OLD_LC_VALUE'], 2)
+
+        self.assertTrue({"A", "B"}.issubset(set(alert_data['COMPONENT 1'].tolist())))
+        self.assertTrue({"B", "C"}.issubset(set(alert_data['COMPONENT 2'].tolist())))
+
+    def test_alert_messages_more_commits(self):
+        # Create a dummy dataframe
+        increasing_data = pd.DataFrame({
+            'COMPONENT 1': ['A', 'C'],
+            'COMPONENT 2': ['B', 'D'],
+            'NEW_LC_VALUE': [7, 2],
+            'OLD_LC_VALUE': [1, 1],
+            'COMMIT': ['abc', 'abc']
+        })
+
+        # Test the alert_messages function
+        message = alert_messages(increasing_data)
+
+        self.assertEqual(message.count('Commit abc:'), 1)
+        self.assertTrue(message.startswith('Commit abc:'))
+        self.assertIn('Commit abc:', message)
+        self.assertIn('ERROR', message)
+        self.assertIn('A and B: NOW COUPLED', message)
+        self.assertIn('(Value increased from 1 to 7)', message)
 
     def test_alert_messages_error(self):
         # Create a dummy dataframe
@@ -384,10 +428,32 @@ class TestLogicalCouplingTool(unittest.TestCase):
         # Test the alert_messages function
         message = alert_messages(increasing_data)
 
+        self.assertEqual(message.count('Commit abc:'), 1)
+        self.assertTrue(message.startswith('Commit abc:'))
         self.assertIn('Commit abc:', message)
         self.assertIn('ERROR', message)
         self.assertIn('A and B: NOW COUPLED', message)
         self.assertIn('(Value increased from 1 to 7)', message)
+
+    def test_alert_messages_error_5(self):
+        # Create a dummy dataframe
+        increasing_data = pd.DataFrame({
+            'COMPONENT 1': ['A'],
+            'COMPONENT 2': ['B'],
+            'NEW_LC_VALUE': [5],
+            'OLD_LC_VALUE': [1],
+            'COMMIT': ['abc']
+        })
+
+        # Test the alert_messages function
+        message = alert_messages(increasing_data)
+
+        self.assertEqual(message.count('Commit abc:'), 1)
+        self.assertTrue(message.startswith('Commit abc:'))
+        self.assertIn('Commit abc:', message)
+        self.assertIn('ERROR', message)
+        self.assertIn('A and B: NOW COUPLED', message)
+        self.assertIn('(Value increased from 1 to 5)', message)
 
     def test_alert_messages_warning(self):
         # Create a dummy dataframe
