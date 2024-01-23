@@ -1,0 +1,39 @@
+2024-01-16 17:10:23 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-16 17:19:05 - INFO - Logical coupling tool started
+2024-01-16 17:19:06 - ERROR - Cmd('git') failed due to: exit code(128)
+  cmdline: git clone -v -- https://github.com/example/repo.git .temp/https:__github.com_example_repo.git
+  stderr: 'Cloning into '.temp/https:__github.com_example_repo.git'...
+remote: Repository not found.
+fatal: repository 'https://github.com/example/repo.git/' not found
+'
+2024-01-16 17:19:06 - ERROR - Traceback (most recent call last):
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/LogicalCouplingNoDb/src/logical_coupling.py", line 356, in run
+    path_to_cloned_repo = clone(repo_url)
+                          ^^^^^^^^^^^^^^^
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/LogicalCouplingNoDb/src/util.py", line 12, in clone
+    Repo.clone_from(repo_url, path)
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/.venv/lib/python3.11/site-packages/git/repo/base.py", line 1328, in clone_from
+    return cls._clone(
+           ^^^^^^^^^^^
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/.venv/lib/python3.11/site-packages/git/repo/base.py", line 1237, in _clone
+    finalize_process(proc, stderr=stderr)
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/.venv/lib/python3.11/site-packages/git/util.py", line 453, in finalize_process
+    proc.wait(**kwargs)
+  File "/Users/ncdaam/PycharmProjects/LogicalCouplingTool/.venv/lib/python3.11/site-packages/git/cmd.py", line 600, in wait
+    raise GitCommandError(remove_password_if_present(self.args), status, errstr)
+git.exc.GitCommandError: Cmd('git') failed due to: exit code(128)
+  cmdline: git clone -v -- https://github.com/example/repo.git .temp/https:__github.com_example_repo.git
+  stderr: 'Cloning into '.temp/https:__github.com_example_repo.git'...
+remote: Repository not found.
+fatal: repository 'https://github.com/example/repo.git/' not found
+'
+
+2024-01-16 17:19:06 - INFO - Logical coupling tool finished with error
+2024-01-16 17:19:40 - INFO - Logical coupling tool started
+2024-01-16 17:28:29 - INFO - Loading previous results from .data/ProjectToTestLogicalCouplingTool/LogicalCoupling.csv
+2024-01-16 17:28:29 - INFO - Checked out branch my_new_branch
+2024-01-16 17:28:29 - INFO - No previous results found
+2024-01-16 17:28:29 - INFO - Created directory for results: .data/ProjectToTestLogicalCouplingTool
+2024-01-16 17:28:29 - INFO - No previous commits found
+2024-01-16 17:28:29 - INFO - Created directory for results: .data/ProjectToTestLogicalCouplingTool
+2024-01-16 17:28:29 - INFO - Ignore file found
