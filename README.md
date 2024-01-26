@@ -58,7 +58,7 @@ The Logical Coupling Tool can be deployed as a Flask web application. To use the
    - **Logical Coupling Analysis**: `http://localhost:5001/logical-coupling`
    - **Developer Coupling Analysis**: `http://localhost:5001/developer-coupling`
 
-### Endpoint Parameters
+#### Endpoint Parameters
 
 The endpoints accept the following parameters:
 
