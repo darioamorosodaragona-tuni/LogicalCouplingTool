@@ -62,7 +62,7 @@ The endpoints accept the following parameters:
 - `branch`: Branch name to analyze.
 - `commits`: List of commit hashes to analyze (comma-separated).
 
-### Jenkins Pipeline Integration
+#### Jenkins Pipeline Integration
 
 The Logical Coupling Tool can be seamlessly integrated into a Jenkins pipeline to automate the analysis of logical and developer coupling in your software projects. The provided Jenkinsfile demonstrates how to incorporate the tool into your CI/CD workflow. Here's how it works:
 
