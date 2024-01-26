@@ -101,7 +101,18 @@ Upon completion of analysis, the app either in Flask mode or used locally return
 
 ## Configuration
 
-The tool can be configured using a `.lcignore` file to specify components to ignore during analysis. Each component to ignore should be listed on a separate line in the file.
+The Logical Coupling Tool can be configured using a `.lcignore` file to specify components to ignore during analysis. Each component to ignore should be listed on a separate line in the file.
+The `.lcignore` file should be placed in the root directory of the repository.
+
+### Example .lcignore File
+
+Here's an example of how to structure a .lcignore file:
+
+```plaintext
+tests/*
+docs/*
+config.yaml
+```
 
 ## Contributing
 
