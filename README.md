@@ -58,6 +58,14 @@ The Logical Coupling Tool can be deployed as a Flask web application. To use the
    - **Logical Coupling Analysis**: `http://localhost:5001/logical-coupling`
    - **Developer Coupling Analysis**: `http://localhost:5001/developer-coupling`
 
+### Endpoint Parameters
+
+The endpoints accept the following parameters:
+
+- `git_url`: URL of the Git repository.
+- `branch`: Branch name to analyze.
+- `commits`: List of commit hashes to analyze (comma-separated).
+
 ### Using the Tool Locally
 
 You can also use the Logical Coupling Tool locally by importing and calling the appropriate functions in your Python script. Here's an example of how to use it:
@@ -84,6 +92,16 @@ else:
     print("Logical couplings detected:")
     print(messages)
 ```
+## Return Values
+
+Upon completion of analysis, the app either in Flask mode or used locally returns the following values:
+
+- **Exit Code**: Indicates the outcome of the analysis.
+  - **Exit Code 0**: No logical couplings detected.
+  - **Exit Code 1**: Logical couplings detected.
+
+- **Message**: Additional information or messages related to the analysis outcome.
+  - For example, if logical couplings are detected, the message might provide details about the detected couplings. If no couplings are detected, the message could indicate that no couplings were found.
 
 ## Configuration
 
@@ -103,5 +121,3 @@ Contributions to the Logical Coupling Tool are welcome! To contribute:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-
-This README now includes instructions for using the Logical Coupling Tool both as a Flask app and locally, providing flexibility in how users can utilize the tool based on their requirements.
