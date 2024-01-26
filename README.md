@@ -62,6 +62,25 @@ The endpoints accept the following parameters:
 - `branch`: Branch name to analyze.
 - `commits`: List of commit hashes to analyze (comma-separated).
 
+### Jenkins Pipeline Integration
+
+The Logical Coupling Tool can be seamlessly integrated into a Jenkins pipeline to automate the analysis of logical and developer coupling in your software projects. The provided Jenkinsfile demonstrates how to incorporate the tool into your CI/CD workflow. Here's how it works:
+
+1. **Pipeline Configuration**: The Jenkins pipeline is configured to execute the logical coupling analysis in two stages: `Logical Coupling` and `Developer Coupling`. These stages are defined within the `stages` section of the pipeline script.
+
+2. **Environment Variables**: Several environment variables are defined at the beginning of the pipeline script to store important parameters such as the Flask app URL, exit codes, messages, and the webhook URL for sending notifications.
+
+3. **Stage Execution**: Each stage in the pipeline script executes the corresponding analysis (logical or developer coupling) using the `executeCouplingStage` function. This function sends a GET request to the Flask app endpoint (`/logical-coupling` or `/developer-coupling`) with the necessary parameters such as the Git URL, branch name, and commit hash.
+
+4. **Error Handling**: The pipeline script includes error handling mechanisms to catch and handle any exceptions that occur during the execution of each stage. If an error occurs, it sets the exit code to 500 and the message to indicate the type of error encountered.
+
+5. **Post-Build Actions**: After executing the stages, the pipeline script checks the exit codes of both stages. If any stage fails (exit code != 0), the pipeline marks the build as failed. Otherwise, it marks the build as successful.
+
+6. **Notifications**: If a webhook URL is provided, the pipeline script sends notifications to a Teams channel using the Office 365 Connector plugin. These notifications include information about the exit codes and messages from each stage, allowing team members to stay informed about the analysis results.
+
+This Jenkins pipeline provides a robust and automated way to integrate the Logical Coupling Tool into your CI/CD process, enabling you to continuously monitor and improve the quality of your software projects.
+
+
 ### Using the Tool Locally
 
 You can also use the Logical Coupling Tool locally by importing and calling the appropriate functions in your Python script. Here's an example of how to use it:
