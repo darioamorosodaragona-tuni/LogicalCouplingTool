@@ -1,7 +1,3 @@
-Certainly! Here's the updated README.md file with added instructions for using the Logical Coupling Tool locally:
-
----
-
 # Logical Coupling Tool
 
 The Logical Coupling Tool is designed to analyze commits in a software repository and identify logical couplings between different components. It helps in understanding the relationships between different parts of the codebase and can be used for various software maintenance tasks such as refactoring, code reviews, and bug analysis.
@@ -120,4 +116,3 @@ Contributions to the Logical Coupling Tool are welcome! To contribute:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
