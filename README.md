@@ -106,13 +106,21 @@ The `.lcignore` file should be placed in the root directory of the repository.
 
 ### Example .lcignore File
 
-Here's an example of how to structure a .lcignore file:
+Here's an example of how to structure a `.lcignore` file:
 
 ```plaintext
 tests/*
 docs/*
 config.yaml
+*.py
 ```
+
+In this example:
+
+- `tests/*`: Ignores all components under the "tests" directory.
+- `docs/*`: Ignores all components under the "docs" directory.
+- `config.yaml`: Ignores the specific file named "config.yaml".
+- `*.py`: Ignores all Python files.
 
 ## Contributing
 
