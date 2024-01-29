@@ -1,16 +1,34 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
+from urllib.parse import urlparse
 
 from git import Repo
 
 
+def is_remote_git_repo(repo_path):
+    # Check if it's a URL
+    parsed_url = urlparse(repo_path)
+    if parsed_url.scheme and parsed_url.netloc:
+        # Assuming it's a remote Git repository URL
+        return True
+    # Check if it's a local path
+    if os.path.exists(repo_path) and os.path.isdir(repo_path):
+        # Assuming it's a local Git repository path
+        return False
+    # Not a valid remote URL or local path
+    raise ValueError("Invalid Git repository path: {}".format(repo_path))
+
+
 def clone(repo_url):
-    path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
-    print(os.path.relpath(path, os.getcwd()))
-    print(os.path.abspath(path))
-    Repo.clone_from(repo_url, path)
-    return path
+    if is_remote_git_repo(repo_url):
+        path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
+        print(os.path.relpath(path, os.getcwd()))
+        print(os.path.abspath(path))
+        Repo.clone_from(repo_url, path)
+        return path
+    else:
+        return repo_url
 
 
 def checkout(path_to_repo, branch, logger):
@@ -23,9 +41,13 @@ def checkout(path_to_repo, branch, logger):
     logger.info(f"Checked out branch {branch}")
 
 
+# def root_calculator(file_path: str) -> str:
+#     path = file_path.lstrip(os.sep)
+#     root = path[:path.index(os.sep)] if os.sep in path else path
+#     return root
+
 def root_calculator(file_path: str) -> str:
-    path = file_path.lstrip(os.sep)
-    root = path[:path.index(os.sep)] if os.sep in path else path
+    root = file_path.rsplit(os.sep, 1)[0] if os.sep in file_path else file_path
     return root
 
 

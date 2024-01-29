@@ -9,6 +9,7 @@ import git
 import pandas
 import pandas as pd
 import pydriller
+import tqdm
 
 # from .util import *
 from coupling import util
@@ -125,7 +126,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze,
                                           only_in_branch=branch)
 
-    for commit in repository.traverse_commits():
+    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", unit_scale=True, position=0, leave=True):
         result = []
 
         # if commit.hash == last_commit_analyzed:
@@ -134,7 +135,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
         modified_files = commit.modified_files
 
-        for files in modified_files:
+        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", unit_scale=True, position=1, leave=False):
             logger.debug(f"Modified file: {files.new_path}")
             if files.new_path is None:
                 continue
@@ -364,10 +365,10 @@ def run(repo_url, branch, commit_hash):
         commit_hash = commit_hash
         branch = branch
         repo_url = repo_url
-        repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
         logger.debug(f"Repo name: {repo_name}")
 
-        path_to_cloned_repo =util.clone(repo_url)
+        path_to_cloned_repo = util.clone(repo_url)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
 
