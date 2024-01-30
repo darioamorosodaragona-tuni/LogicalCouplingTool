@@ -434,4 +434,4 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
 
     finally:
         logger.debug("Deleting temporary files")
-        shutil.rmtree('.temp/', ignore_errors=True)
+        # shutil.rmtree('.temp/', ignore_errors=True)
