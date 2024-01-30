@@ -17,7 +17,7 @@ from coupling import util
 logger = util.setup_logging('logical_coupling')
 
 
-def load_previous_results(repo_name, path_to_repo, branch):
+def load_previous_results(repo_name, path_to_repo):
     """
     Load previous logical coupling results from CSV files.
 
@@ -37,8 +37,6 @@ def load_previous_results(repo_name, path_to_repo, branch):
     file = os.path.relpath(file, os.getcwd())
 
     logger.info(f"Loading previous results from {file}")
-
-    util.checkout(path_to_repo, branch, logger)
 
     ignore = f'{path_to_repo}/.lcignore'
 
@@ -123,10 +121,13 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         commits_to_analyze = repo.git.execute(['git', 'rev-list', '--ancestry-path',
                                                '%s..%s' % (last_commit_analyzed, commits[0])]).split()
         logger.debug(f"Commits to analyze: {commits_to_analyze}")
+        logger.info(f"Analyzing {len(commits_to_analyze)} commits on branch {branch}")
         repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze,
                                           only_in_branch=branch)
 
-    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", unit_scale=True, position=0, leave=True):
+    total_modified_files = 0
+    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
+                            leave=True):
         result = []
 
         # if commit.hash == last_commit_analyzed:
@@ -134,8 +135,9 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         #     continue
 
         modified_files = commit.modified_files
+        total_modified_files += len(modified_files)
 
-        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", unit_scale=True, position=1, leave=False):
+        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
             logger.debug(f"Modified file: {files.new_path}")
             if files.new_path is None:
                 continue
@@ -171,6 +173,9 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             logger.debug("No new coupling found in commit " + commit.hash)
 
         commits_analyzed.append(commit.hash)
+
+    logger.info(f"Analyzed {total_modified_files} modified files on branch {branch}")
+
     result = pd.DataFrame(rows)
 
     if result.empty:
@@ -339,7 +344,7 @@ def save(data, repo_name, new_commits_analyzed, commits_analyzed):
     commits_analyzed.to_csv(file_commits, index=False)
 
 
-def run(repo_url, branch, commit_hash):
+def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
     """
       Execute the logical coupling tool on a specific repository, branch, and commit.
 
@@ -366,6 +371,8 @@ def run(repo_url, branch, commit_hash):
         branch = branch
         repo_url = repo_url
         repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
+        # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+
         logger.debug(f"Repo name: {repo_name}")
 
         path_to_cloned_repo = util.clone(repo_url)
@@ -374,19 +381,26 @@ def run(repo_url, branch, commit_hash):
 
         logger.info(f"Loading previous results")
 
-        data, components_to_ignore, commits_analyzed = load_previous_results(repo_name, path_to_cloned_repo, branch)
+        util.checkout(path_to_cloned_repo, branch, logger)
+
+        util.pull(path_to_cloned_repo, branch, logger)
+
+        data, components_to_ignore, commits_analyzed = load_previous_results(repo_name, path_to_cloned_repo)
 
         logger.info(f"Loaded previous results")
         logger.debug(f"Data: {data}")
         logger.debug(f"Components to ignore: {components_to_ignore}")
 
-        if commits_analyzed.empty:
+        if commits_analyzed.empty and last_commit_analyzed is None:
             last_commit = None
         else:
-            logger.debug(f"Commits analyzed: {commits_analyzed}")
-            logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+            if not commits_analyzed.empty:
+                logger.debug(f"Commits analyzed: {commits_analyzed}")
+                logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
 
-            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
+                last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
+            elif last_commit_analyzed:
+                last_commit = last_commit_analyzed
 
         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
                                                          components_to_ignore)

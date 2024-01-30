@@ -21,14 +21,28 @@ def is_remote_git_repo(repo_path):
 
 
 def clone(repo_url):
-    if is_remote_git_repo(repo_url):
-        path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
-        print(os.path.relpath(path, os.getcwd()))
-        print(os.path.abspath(path))
-        Repo.clone_from(repo_url, path)
-        return path
+
+    path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
+    if not os.path.exists(path):
+        if is_remote_git_repo(repo_url):
+            # path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
+            print(os.path.relpath(path, os.getcwd()))
+            print(os.path.abspath(path))
+            Repo.clone_from(repo_url, path)
+            return path
+        else:
+            return repo_url
     else:
-        return repo_url
+        return path
+
+
+def pull(path_to_repo, branch, logger):
+    logger.debug(f"Path to repo: {path_to_repo}")
+    logger.debug(f"Pulling branch {branch}")
+    repo = Repo(path_to_repo)
+    repo.remotes.origin.pull()
+    logger.info(f"Pulled branch {branch}")
+
 
 
 def checkout(path_to_repo, branch, logger):

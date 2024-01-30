@@ -62,7 +62,7 @@ class TestData(unittest.TestCase):
         df1 = pd.DataFrame(data1)
         os.makedirs(f'../.data/test', exist_ok=True)
         df1.to_csv(f'../.data/test/LogicalCoupling.csv', index=False)
-        loaded = load_previous_results('test')
+        loaded = load_previous_results('test', )
         self.assertTrue(df1.equals(loaded), "Load failed.")
         os.remove(f'../.data/test/LogicalCoupling.csv')
         os.rmdir(f'../.data/test')
@@ -74,7 +74,7 @@ class TestData(unittest.TestCase):
         os.makedirs(f'../.data/test', exist_ok=True)
         df1.to_csv(f'../.data/test/LogicalCoupling.csv', index=False)
 
-        loaded = load_previous_results('test_main')
+        loaded = load_previous_results('test_main', )
         expected_results = pd.DataFrame(columns=['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE'])
 
         self.assertTrue(expected_results.equals(loaded), "Load failed.")

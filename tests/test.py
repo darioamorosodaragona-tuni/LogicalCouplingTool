@@ -115,7 +115,7 @@ class TestLogicalCouplingTool(unittest.TestCase):
             mock_checkout.return_value = None
 
             # Test with existing data
-            data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir, 'main')
+            data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir)
 
             self.assertEqual(len(data.columns), 3)
             self.assertTrue(
@@ -133,7 +133,7 @@ class TestLogicalCouplingTool(unittest.TestCase):
         with patch("coupling.util.checkout") as mock_checkout:
             mock_checkout.return_value = None
 
-            data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir, 'main')
+            data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir)
 
             self.assertTrue(os.path.exists('.data/repo_name/'))
             self.assertTrue("COMMITS ANALYZED" in commits_analyzed.columns)
@@ -154,7 +154,7 @@ class TestLogicalCouplingTool(unittest.TestCase):
                 with patch("pandas.read_csv") as pansa_mock:
                     pansa_mock.return_value = pandas.DataFrame(columns=['COMMITS ANALYZED'])
                     # Test with existing data
-                    data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir, 'main')
+                    data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir)
 
                     self.assertTrue(os.path.exists('.data/repo_name/'))
                     self.assertEqual(len(data.columns), 3)
@@ -176,7 +176,7 @@ class TestLogicalCouplingTool(unittest.TestCase):
                 with patch("pandas.read_csv") as pansa_mock:
                     pansa_mock.return_value = pandas.DataFrame()
                     # Test with existing data
-                    data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir, 'main')
+                    data, components_to_ignore, commits_analyzed = load_previous_results('repo_name', self.temp_dir)
 
                     self.assertTrue(os.path.exists('.data/repo_name/'))
                     self.assertEqual(len(components_to_ignore), 0)
@@ -532,47 +532,51 @@ class TestLogicalCouplingTool(unittest.TestCase):
         # Mock the clone function
         with patch('git.Repo.clone_from') as mock_clone:
             mock_clone.return_value = self.temp_dir
-            with patch("coupling.util.checkout") as mock_checkout:
-                mock_checkout.return_value = None
-                with patch('pydriller.Repository') as mock_repository:
-                    # Create a custom commit object for testing
-                    commit_mock1 = Mock(hash='abc', modified_files=[MockFile('file1.txt'), MockFile('file2.py')])
-                    commit_mock2 = Mock(hash='def', modified_files=[MockFile('file2.py'), MockFile('file3.py')])
-                    mock_repository_instance = mock_repository.return_value
-                    mock_repository_instance.traverse_commits.return_value = [commit_mock1, commit_mock2]
+            with patch("coupling.util.pull") as mock_pull:
+                mock_pull.return_value = None
+                with patch("coupling.util.checkout") as mock_checkout:
+                    mock_checkout.return_value = None
+                    with patch('pydriller.Repository') as mock_repository:
+                        # Create a custom commit object for testing
+                        commit_mock1 = Mock(hash='abc', modified_files=[MockFile('file1.txt'), MockFile('file2.py')])
+                        commit_mock2 = Mock(hash='def', modified_files=[MockFile('file2.py'), MockFile('file3.py')])
+                        mock_repository_instance = mock_repository.return_value
+                        mock_repository_instance.traverse_commits.return_value = [commit_mock1, commit_mock2]
 
-                    # Test the run function
-                    exit_code, messages, _ = run('https://github.com/example/repo.git', 'main', 'abc')
+                        # Test the run function
+                        exit_code, messages, _ = run('https://github.com/example/repo.git', 'main', 'abc')
 
-                    self.assertEqual(exit_code, 1)
-                    self.assertTrue("COUPLING" in messages)
-                    self.assertTrue("WARNING" in messages)
-                    self.assertTrue("NEW COUPLING" in messages)
-                    self.assertTrue("abc" in messages)
-                    self.assertTrue("def" in messages)
+                        self.assertEqual(exit_code, 1)
+                        self.assertTrue("COUPLING" in messages)
+                        self.assertTrue("WARNING" in messages)
+                        self.assertTrue("NEW COUPLING" in messages)
+                        self.assertTrue("abc" in messages)
+                        self.assertTrue("def" in messages)
 
     def test_run_previous_commits_analyzed(self):
         # Mock the clone function
         with patch('git.Repo.clone_from') as mock_clone:
             mock_clone.return_value = self.temp_dir
-            with patch("coupling.util.checkout") as mock_checkout:
-                mock_checkout.return_value = None
-                with patch('pydriller.Repository') as mock_repository:
-                    # Create a custom commit object for testing
-                    commit_mock1 = Mock(hash='abc', modified_files=[MockFile('file1.txt'), MockFile('file2.py')])
-                    commit_mock2 = Mock(hash='def', modified_files=[MockFile('file2.py'), MockFile('file3.py')])
-                    mock_repository_instance = mock_repository.return_value
-                    mock_repository_instance.traverse_commits.return_value = [commit_mock1, commit_mock2]
+            with patch("coupling.util.pull") as mock_pull:
+                mock_pull.return_value = None
+                with patch("coupling.util.checkout") as mock_checkout:
+                    mock_checkout.return_value = None
+                    with patch('pydriller.Repository') as mock_repository:
+                        # Create a custom commit object for testing
+                        commit_mock1 = Mock(hash='abc', modified_files=[MockFile('file1.txt'), MockFile('file2.py')])
+                        commit_mock2 = Mock(hash='def', modified_files=[MockFile('file2.py'), MockFile('file3.py')])
+                        mock_repository_instance = mock_repository.return_value
+                        mock_repository_instance.traverse_commits.return_value = [commit_mock1, commit_mock2]
 
-                    # Test the run function
-                    exit_code, messages, _ = run('https://github.com/example/repo.git', 'main', 'abc')
+                        # Test the run function
+                        exit_code, messages, _ = run('https://github.com/example/repo.git', 'main', 'abc')
 
-                    self.assertEqual(exit_code, 1)
-                    self.assertTrue("COUPLING" in messages)
-                    self.assertTrue("WARNING" in messages)
-                    self.assertTrue("NEW COUPLING" in messages)
-                    self.assertTrue("abc" in messages)
-                    self.assertTrue("def" in messages)
+                        self.assertEqual(exit_code, 1)
+                        self.assertTrue("COUPLING" in messages)
+                        self.assertTrue("WARNING" in messages)
+                        self.assertTrue("NEW COUPLING" in messages)
+                        self.assertTrue("abc" in messages)
+                        self.assertTrue("def" in messages)
 
     if __name__ == '__main__':
         unittest.main()

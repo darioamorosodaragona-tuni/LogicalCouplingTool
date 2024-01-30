@@ -1,0 +1,465 @@
+2024-01-29 17:12:56 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:12:56 - INFO - Analyzed commit def on branch main
+2024-01-29 17:12:56 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:12:56 - INFO - Analyzing commits ['0e29c4197c38361b263bce89feac98667860e6d8', '0bfa0994f90ea2224289ecbd4093def6ff8147f1', '014220b19b6ffa15c2476dee62a38811126dac42'] on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:12:56 - INFO - Analyzed commit def on branch main
+2024-01-29 17:12:56 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzed commit def on branch main
+2024-01-29 17:12:56 - INFO - Analyzing commits ['0e29c4197c38361b263bce89feac98667860e6d8', '0bfa0994f90ea2224289ecbd4093def6ff8147f1'] on branch main
+2024-01-29 17:12:56 - INFO - Previous commits analyzed: 0e29c4197c38361b263bce89feac98667860e6d8
+2024-01-29 17:12:56 - INFO - Analyzing commits ['0e29c4197c38361b263bce89feac98667860e6d8', '0bfa0994f90ea2224289ecbd4093def6ff8147f1'] on branch main
+2024-01-29 17:12:56 - INFO - Previous commits analyzed: 0e29c4197c38361b263bce89feac98667860e6d8
+2024-01-29 17:12:56 - INFO - Analyzing commits ['b1700164c68f7620b0115fa134a3d3d3373b9e45', '851a67716ce74dee54f06927965fdb3a1a0b10a3'] on branch main
+2024-01-29 17:12:56 - INFO - Previous commits analyzed: 851a67716ce74dee54f06927965fdb3a1a0b10a3
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - No previous results found
+2024-01-29 17:12:56 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpkmhvfvnj/.data/repo_name
+2024-01-29 17:12:56 - INFO - No previous commits found
+2024-01-29 17:12:56 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - Previous results found
+2024-01-29 17:12:56 - INFO - No previous commits found
+2024-01-29 17:12:56 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - No previous results found
+2024-01-29 17:12:56 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpo0f1wjwa/.data/repo_name
+2024-01-29 17:12:56 - INFO - Previous commits analyzed found
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - Previous results found
+2024-01-29 17:12:56 - INFO - Previous commits analyzed found
+2024-01-29 17:12:56 - INFO - Ignore file found
+2024-01-29 17:12:56 - INFO - Logical coupling tool started
+2024-01-29 17:12:56 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:12:56 - INFO - Loading previous results
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - No previous results found
+2024-01-29 17:12:56 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpbu3hkg4g/.data/repob:main
+2024-01-29 17:12:56 - INFO - No previous commits found
+2024-01-29 17:12:56 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:12:56 - INFO - Loaded previous results
+2024-01-29 17:12:56 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:12:56 - INFO - Analyzed commit def on branch main
+2024-01-29 17:12:56 - INFO - New coupling found 
+2024-01-29 17:12:56 - INFO - Logical coupling tool finished
+2024-01-29 17:12:56 - INFO - Logical coupling tool started
+2024-01-29 17:12:56 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:12:56 - INFO - Loading previous results
+2024-01-29 17:12:56 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:12:56 - INFO - No previous results found
+2024-01-29 17:12:56 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp2ayvuzgo/.data/repob:main
+2024-01-29 17:12:56 - INFO - No previous commits found
+2024-01-29 17:12:56 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:12:56 - INFO - Loaded previous results
+2024-01-29 17:12:56 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:12:56 - INFO - No previous commits analyzed
+2024-01-29 17:12:56 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:12:56 - INFO - Analyzed commit def on branch main
+2024-01-29 17:12:56 - INFO - New coupling found 
+2024-01-29 17:12:56 - INFO - Logical coupling tool finished
+2024-01-29 17:13:12 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:13:12 - INFO - No previous commits analyzed
+2024-01-29 17:13:12 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:13:12 - INFO - Analyzing commits ['7eae8ea558ec316a964e543c60c56f81c7b322c6', '2a4a8f0089c20e4a400fdb29646525d2097aa8a7', '738b4b756f534b44376f81de16ea95e441bd3d57'] on branch main
+2024-01-29 17:13:12 - INFO - No previous commits analyzed
+2024-01-29 17:13:12 - INFO - Analyzed commit 7eae8ea558ec316a964e543c60c56f81c7b322c6 on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit 2a4a8f0089c20e4a400fdb29646525d2097aa8a7 on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit 738b4b756f534b44376f81de16ea95e441bd3d57 on branch main
+2024-01-29 17:13:12 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:13:12 - INFO - No previous commits analyzed
+2024-01-29 17:13:12 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:12 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:13:12 - INFO - No previous commits analyzed
+2024-01-29 17:13:12 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:12 - INFO - Analyzing commits ['7eae8ea558ec316a964e543c60c56f81c7b322c6', '2a4a8f0089c20e4a400fdb29646525d2097aa8a7'] on branch main
+2024-01-29 17:13:12 - INFO - Previous commits analyzed: 7eae8ea558ec316a964e543c60c56f81c7b322c6
+2024-01-29 17:13:12 - INFO - Analyzed commit 2a4a8f0089c20e4a400fdb29646525d2097aa8a7 on branch main
+2024-01-29 17:13:12 - INFO - Analyzing commits ['7eae8ea558ec316a964e543c60c56f81c7b322c6', '2a4a8f0089c20e4a400fdb29646525d2097aa8a7'] on branch main
+2024-01-29 17:13:12 - INFO - Previous commits analyzed: 7eae8ea558ec316a964e543c60c56f81c7b322c6
+2024-01-29 17:13:12 - INFO - Analyzed commit 2a4a8f0089c20e4a400fdb29646525d2097aa8a7 on branch main
+2024-01-29 17:13:12 - INFO - No new coupling found
+2024-01-29 17:13:12 - INFO - Analyzing commits ['dd4d8e54b9e5e4ea38db128fc8a53a9c1a0a7645', 'a4628e4ab3bc4ba43e22fd040b5a030ebfd3cc83'] on branch main
+2024-01-29 17:13:12 - INFO - Previous commits analyzed: a4628e4ab3bc4ba43e22fd040b5a030ebfd3cc83
+2024-01-29 17:13:12 - INFO - Analyzed commit dd4d8e54b9e5e4ea38db128fc8a53a9c1a0a7645 on branch main
+2024-01-29 17:13:12 - INFO - No new coupling found
+2024-01-29 17:13:12 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:12 - INFO - No previous results found
+2024-01-29 17:13:12 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp9w8k7frd/.data/repo_name
+2024-01-29 17:13:12 - INFO - No previous commits found
+2024-01-29 17:13:12 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:13:12 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:12 - INFO - Previous results found
+2024-01-29 17:13:12 - INFO - No previous commits found
+2024-01-29 17:13:12 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:13:12 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:12 - INFO - No previous results found
+2024-01-29 17:13:12 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpj9tmn1p1/.data/repo_name
+2024-01-29 17:13:12 - INFO - Previous commits analyzed found
+2024-01-29 17:13:12 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:12 - INFO - Previous results found
+2024-01-29 17:13:12 - INFO - Previous commits analyzed found
+2024-01-29 17:13:12 - INFO - Ignore file found
+2024-01-29 17:13:12 - INFO - Logical coupling tool started
+2024-01-29 17:13:12 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:13:12 - INFO - Loading previous results
+2024-01-29 17:13:12 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:13:12 - INFO - No previous results found
+2024-01-29 17:13:12 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmppm9pnw9p/.data/repob:main
+2024-01-29 17:13:12 - INFO - No previous commits found
+2024-01-29 17:13:12 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:13:12 - INFO - Loaded previous results
+2024-01-29 17:13:12 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:13:12 - INFO - No previous commits analyzed
+2024-01-29 17:13:12 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:12 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:12 - INFO - New coupling found 
+2024-01-29 17:13:13 - INFO - Logical coupling tool finished
+2024-01-29 17:13:13 - INFO - Logical coupling tool started
+2024-01-29 17:13:13 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:13:13 - INFO - Loading previous results
+2024-01-29 17:13:13 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:13:13 - INFO - No previous results found
+2024-01-29 17:13:13 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp0zfb6qwf/.data/repob:main
+2024-01-29 17:13:13 - INFO - No previous commits found
+2024-01-29 17:13:13 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:13:13 - INFO - Loaded previous results
+2024-01-29 17:13:13 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:13:13 - INFO - No previous commits analyzed
+2024-01-29 17:13:13 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:13 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:13 - INFO - New coupling found 
+2024-01-29 17:13:13 - INFO - Logical coupling tool finished
+2024-01-29 17:13:22 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:22 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:22 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:13:22 - INFO - Analyzing commits ['c0015cc55732b0ee54e874696823b7eb5b8ed0a6', '04f8c1eece2779cc54e98fcf8b961656ab34c735', '885bd7a166f2153bf929a932967b52600efc8f58'] on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:22 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:22 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:22 - INFO - Analyzing commits ['c0015cc55732b0ee54e874696823b7eb5b8ed0a6', '04f8c1eece2779cc54e98fcf8b961656ab34c735'] on branch main
+2024-01-29 17:13:22 - INFO - Previous commits analyzed: c0015cc55732b0ee54e874696823b7eb5b8ed0a6
+2024-01-29 17:13:22 - INFO - Analyzing commits ['c0015cc55732b0ee54e874696823b7eb5b8ed0a6', '04f8c1eece2779cc54e98fcf8b961656ab34c735'] on branch main
+2024-01-29 17:13:22 - INFO - Previous commits analyzed: c0015cc55732b0ee54e874696823b7eb5b8ed0a6
+2024-01-29 17:13:22 - INFO - Analyzing commits ['200c5e034bf0a6e570c71f8e465a956de28a6585', '8afc23e5284e911ba1e340d33b2f804d96ce047e'] on branch main
+2024-01-29 17:13:22 - INFO - Previous commits analyzed: 8afc23e5284e911ba1e340d33b2f804d96ce047e
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - No previous results found
+2024-01-29 17:13:22 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpdqlftn0n/.data/repo_name
+2024-01-29 17:13:22 - INFO - No previous commits found
+2024-01-29 17:13:22 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - Previous results found
+2024-01-29 17:13:22 - INFO - No previous commits found
+2024-01-29 17:13:22 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - No previous results found
+2024-01-29 17:13:22 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpyk4zne2r/.data/repo_name
+2024-01-29 17:13:22 - INFO - Previous commits analyzed found
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - Previous results found
+2024-01-29 17:13:22 - INFO - Previous commits analyzed found
+2024-01-29 17:13:22 - INFO - Ignore file found
+2024-01-29 17:13:22 - INFO - Logical coupling tool started
+2024-01-29 17:13:22 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:13:22 - INFO - Loading previous results
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - No previous results found
+2024-01-29 17:13:22 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp8rk8suv3/.data/repob:main
+2024-01-29 17:13:22 - INFO - No previous commits found
+2024-01-29 17:13:22 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:13:22 - INFO - Loaded previous results
+2024-01-29 17:13:22 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:22 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:22 - INFO - New coupling found 
+2024-01-29 17:13:22 - INFO - Logical coupling tool finished
+2024-01-29 17:13:22 - INFO - Logical coupling tool started
+2024-01-29 17:13:22 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:13:22 - INFO - Loading previous results
+2024-01-29 17:13:22 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:13:22 - INFO - No previous results found
+2024-01-29 17:13:22 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmps1_fcav_/.data/repob:main
+2024-01-29 17:13:22 - INFO - No previous commits found
+2024-01-29 17:13:22 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:13:22 - INFO - Loaded previous results
+2024-01-29 17:13:22 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:13:22 - INFO - No previous commits analyzed
+2024-01-29 17:13:22 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:13:22 - INFO - Analyzed commit def on branch main
+2024-01-29 17:13:22 - INFO - New coupling found 
+2024-01-29 17:13:22 - INFO - Logical coupling tool finished
+2024-01-29 17:14:09 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:14:09 - INFO - No previous commits analyzed
+2024-01-29 17:14:09 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:14:09 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:09 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:14:10 - INFO - Analyzing commits ['a4645596cb79e4602a5482dcba28ffde7c917326', '28a31e124a695740e3f08be340f0fb55c5b15eef', 'b4330edb8ce573385c8cf2a738f06b9c595f53c2'] on branch main
+2024-01-29 17:14:10 - INFO - No previous commits analyzed
+2024-01-29 17:14:10 - INFO - Analyzed commit a4645596cb79e4602a5482dcba28ffde7c917326 on branch main
+2024-01-29 17:14:10 - INFO - Analyzed commit 28a31e124a695740e3f08be340f0fb55c5b15eef on branch main
+2024-01-29 17:14:10 - INFO - Analyzed commit b4330edb8ce573385c8cf2a738f06b9c595f53c2 on branch main
+2024-01-29 17:14:10 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:14:10 - INFO - No previous commits analyzed
+2024-01-29 17:14:10 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:14:10 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:10 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:14:10 - INFO - No previous commits analyzed
+2024-01-29 17:14:10 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:10 - INFO - Analyzing commits ['c07ec1af765460f491fa29d546ab590b3fb85f3b', '79ade3b42894a737abc87d7ef3fdfb4d290f4d44'] on branch main
+2024-01-29 17:14:10 - INFO - Previous commits analyzed: c07ec1af765460f491fa29d546ab590b3fb85f3b
+2024-01-29 17:14:10 - INFO - Analyzed commit 79ade3b42894a737abc87d7ef3fdfb4d290f4d44 on branch main
+2024-01-29 17:14:10 - INFO - Analyzing commits ['c07ec1af765460f491fa29d546ab590b3fb85f3b', '79ade3b42894a737abc87d7ef3fdfb4d290f4d44'] on branch main
+2024-01-29 17:14:10 - INFO - Previous commits analyzed: c07ec1af765460f491fa29d546ab590b3fb85f3b
+2024-01-29 17:14:10 - INFO - Analyzed commit 79ade3b42894a737abc87d7ef3fdfb4d290f4d44 on branch main
+2024-01-29 17:14:10 - INFO - No new coupling found
+2024-01-29 17:14:10 - INFO - Analyzing commits ['a45e6746168cb2e1bf276ec6cde3e1ace5e843d3', '453551ad257d4e02f916a5a9dd53c82b4ba7e4d0'] on branch main
+2024-01-29 17:14:10 - INFO - Previous commits analyzed: 453551ad257d4e02f916a5a9dd53c82b4ba7e4d0
+2024-01-29 17:14:10 - INFO - Analyzed commit a45e6746168cb2e1bf276ec6cde3e1ace5e843d3 on branch main
+2024-01-29 17:14:10 - INFO - No new coupling found
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - No previous results found
+2024-01-29 17:14:10 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp17d309wq/.data/repo_name
+2024-01-29 17:14:10 - INFO - No previous commits found
+2024-01-29 17:14:10 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - Previous results found
+2024-01-29 17:14:10 - INFO - No previous commits found
+2024-01-29 17:14:10 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - No previous results found
+2024-01-29 17:14:10 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp_0m_ecor/.data/repo_name
+2024-01-29 17:14:10 - INFO - Previous commits analyzed found
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - Previous results found
+2024-01-29 17:14:10 - INFO - Previous commits analyzed found
+2024-01-29 17:14:10 - INFO - Ignore file found
+2024-01-29 17:14:10 - INFO - Logical coupling tool started
+2024-01-29 17:14:10 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:14:10 - INFO - Loading previous results
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - No previous results found
+2024-01-29 17:14:10 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpcxnutb0a/.data/repob:main
+2024-01-29 17:14:10 - INFO - No previous commits found
+2024-01-29 17:14:10 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:14:10 - INFO - Loaded previous results
+2024-01-29 17:14:10 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:14:10 - INFO - No previous commits analyzed
+2024-01-29 17:14:10 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:14:10 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:10 - INFO - New coupling found 
+2024-01-29 17:14:10 - INFO - Logical coupling tool finished
+2024-01-29 17:14:10 - INFO - Logical coupling tool started
+2024-01-29 17:14:10 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:14:10 - INFO - Loading previous results
+2024-01-29 17:14:10 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:14:10 - INFO - No previous results found
+2024-01-29 17:14:10 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpnr8lzizw/.data/repob:main
+2024-01-29 17:14:10 - INFO - No previous commits found
+2024-01-29 17:14:10 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:14:10 - INFO - Loaded previous results
+2024-01-29 17:14:10 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:14:10 - INFO - No previous commits analyzed
+2024-01-29 17:14:10 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:14:10 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:10 - INFO - New coupling found 
+2024-01-29 17:14:10 - INFO - Logical coupling tool finished
+2024-01-29 17:14:43 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:14:43 - INFO - No previous commits analyzed
+2024-01-29 17:14:47 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:14:49 - INFO - Analyzed commit def on branch main
+2024-01-29 17:14:53 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:14:56 - INFO - Analyzing commits ['21ef4cc19ca5b77a5caf59422756ac35607131c2', '6a95067ef84a71ced823bf02d2b15aedf075675f', 'e1dcea5b3feb6215bb7de77528b2c26dfe9142bf'] on branch main
+2024-01-29 17:14:56 - INFO - No previous commits analyzed
+2024-01-29 17:21:56 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit def on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:21:57 - INFO - Analyzing commits ['6d317c8f7a8e69764f9b3dc969b908013d733e35', '5c4d74927d03bc126e6e2b65cdfc74b426e018ed', 'ae80c633b5c2eb0bac0952db09febec05a638db6'] on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit 6d317c8f7a8e69764f9b3dc969b908013d733e35 on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit 5c4d74927d03bc126e6e2b65cdfc74b426e018ed on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit ae80c633b5c2eb0bac0952db09febec05a638db6 on branch main
+2024-01-29 17:21:57 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit def on branch main
+2024-01-29 17:21:57 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit def on branch main
+2024-01-29 17:21:57 - INFO - Analyzing commits ['6d317c8f7a8e69764f9b3dc969b908013d733e35', '5c4d74927d03bc126e6e2b65cdfc74b426e018ed'] on branch main
+2024-01-29 17:21:57 - INFO - Previous commits analyzed: 6d317c8f7a8e69764f9b3dc969b908013d733e35
+2024-01-29 17:21:57 - INFO - Analyzed commit 5c4d74927d03bc126e6e2b65cdfc74b426e018ed on branch main
+2024-01-29 17:21:57 - INFO - Analyzing commits ['6d317c8f7a8e69764f9b3dc969b908013d733e35', '5c4d74927d03bc126e6e2b65cdfc74b426e018ed'] on branch main
+2024-01-29 17:21:57 - INFO - Previous commits analyzed: 6d317c8f7a8e69764f9b3dc969b908013d733e35
+2024-01-29 17:21:57 - INFO - Analyzed commit 5c4d74927d03bc126e6e2b65cdfc74b426e018ed on branch main
+2024-01-29 17:21:57 - INFO - No new coupling found
+2024-01-29 17:21:57 - INFO - Analyzing commits ['adb784ef55485f142153338235a295065ad4342e', '8c9dda8692fa3b4825af46ce98d0f38fe64e839a'] on branch main
+2024-01-29 17:21:57 - INFO - Previous commits analyzed: 8c9dda8692fa3b4825af46ce98d0f38fe64e839a
+2024-01-29 17:21:57 - INFO - Analyzed commit adb784ef55485f142153338235a295065ad4342e on branch main
+2024-01-29 17:21:57 - INFO - No new coupling found
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpt5by66nj/.data/repo_name
+2024-01-29 17:21:57 - INFO - No previous commits found
+2024-01-29 17:21:57 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - Previous results found
+2024-01-29 17:21:57 - INFO - No previous commits found
+2024-01-29 17:21:57 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmp1y9sq7cc/.data/repo_name
+2024-01-29 17:21:57 - INFO - Previous commits analyzed found
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - Previous results found
+2024-01-29 17:21:57 - INFO - Previous commits analyzed found
+2024-01-29 17:21:57 - INFO - Ignore file found
+2024-01-29 17:21:57 - INFO - Logical coupling tool started
+2024-01-29 17:21:57 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:21:57 - INFO - Loading previous results
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpyvmdfkec/.data/repob:main
+2024-01-29 17:21:57 - INFO - No previous commits found
+2024-01-29 17:21:57 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:21:57 - INFO - Loaded previous results
+2024-01-29 17:21:57 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit def on branch main
+2024-01-29 17:21:57 - INFO - New coupling found 
+2024-01-29 17:21:57 - INFO - Logical coupling tool finished
+2024-01-29 17:21:57 - INFO - Logical coupling tool started
+2024-01-29 17:21:57 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:21:57 - INFO - Loading previous results
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmprxdsz1ow/.data/repob:main
+2024-01-29 17:21:57 - INFO - No previous commits found
+2024-01-29 17:21:57 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:21:57 - INFO - Loaded previous results
+2024-01-29 17:21:57 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:21:57 - INFO - No previous commits analyzed
+2024-01-29 17:21:57 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:21:57 - INFO - Analyzed commit def on branch main
+2024-01-29 17:21:57 - INFO - New coupling found 
+2024-01-29 17:21:57 - INFO - Logical coupling tool finished
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/ProjectToTestLogicalCouplingTool/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - Checked out branch my_new_branch
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /Users/ncdaam/PycharmProjects/LogicalCouplingTool/tests/.data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:21:57 - INFO - No previous commits found
+2024-01-29 17:21:57 - INFO - Created directory for results: .data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:21:57 - INFO - Ignore file found
+2024-01-29 17:21:57 - INFO - Loading previous results from .data/ProjectToTestLogicalCouplingTool/LogicalCoupling.csv
+2024-01-29 17:21:57 - INFO - Checked out branch main
+2024-01-29 17:21:57 - INFO - No previous results found
+2024-01-29 17:21:57 - INFO - Created directory for results: /Users/ncdaam/PycharmProjects/LogicalCouplingTool/tests/.data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:21:57 - INFO - Previous commits analyzed found
+2024-01-29 17:23:29 - INFO - Analyzing commits ['abc', 'def', 'ghi'] on branch main
+2024-01-29 17:23:29 - INFO - No previous commits analyzed
+2024-01-29 17:23:29 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:23:29 - INFO - Analyzed commit def on branch main
+2024-01-29 17:23:29 - INFO - Analyzed commit ghi on branch main
+2024-01-29 17:23:29 - INFO - Analyzing commits ['457a1b2031cef80cda0a92258e118ebd37f62d1d', '4410adb0532ce4a894a14bbf1495b202872c2b91', 'f8b7da29ad711ecb5c35d5dbeb0b09b006024b3e'] on branch main
+2024-01-29 17:23:29 - INFO - No previous commits analyzed
+2024-01-29 17:23:29 - INFO - Analyzed commit 457a1b2031cef80cda0a92258e118ebd37f62d1d on branch main
+2024-01-29 17:23:29 - INFO - Analyzed commit 4410adb0532ce4a894a14bbf1495b202872c2b91 on branch main
+2024-01-29 17:23:29 - INFO - Analyzed commit f8b7da29ad711ecb5c35d5dbeb0b09b006024b3e on branch main
+2024-01-29 17:23:29 - INFO - Analyzing commits ['abc', 'def'] on branch main
+2024-01-29 17:23:29 - INFO - No previous commits analyzed
+2024-01-29 17:23:29 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:23:29 - INFO - Analyzed commit def on branch main
+2024-01-29 17:23:29 - INFO - Analyzing commits ['def'] on branch main
+2024-01-29 17:23:29 - INFO - No previous commits analyzed
+2024-01-29 17:23:29 - INFO - Analyzed commit def on branch main
+2024-01-29 17:23:29 - INFO - Analyzing commits ['457a1b2031cef80cda0a92258e118ebd37f62d1d', '4410adb0532ce4a894a14bbf1495b202872c2b91'] on branch main
+2024-01-29 17:23:29 - INFO - Previous commits analyzed: 457a1b2031cef80cda0a92258e118ebd37f62d1d
+2024-01-29 17:23:29 - INFO - Analyzed commit 4410adb0532ce4a894a14bbf1495b202872c2b91 on branch main
+2024-01-29 17:23:30 - INFO - Analyzing commits ['2a06d8d367cc327cbdd6ba02a0458838d97b27fc', 'bc7b5a3b7649c47911194e1b35d91f06e97c86fa'] on branch main
+2024-01-29 17:23:30 - INFO - Previous commits analyzed: 2a06d8d367cc327cbdd6ba02a0458838d97b27fc
+2024-01-29 17:23:30 - INFO - Analyzed commit bc7b5a3b7649c47911194e1b35d91f06e97c86fa on branch main
+2024-01-29 17:23:30 - INFO - No new coupling found
+2024-01-29 17:23:30 - INFO - Analyzing commits ['cbf923d84df35520c333cfca5e56996864bfa28e', 'c9da1a60b754c7cedd3a426b4a1b965d33f1b6f0'] on branch main
+2024-01-29 17:23:30 - INFO - Previous commits analyzed: c9da1a60b754c7cedd3a426b4a1b965d33f1b6f0
+2024-01-29 17:23:30 - INFO - Analyzed commit cbf923d84df35520c333cfca5e56996864bfa28e on branch main
+2024-01-29 17:23:30 - INFO - No new coupling found
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpgaw9qf2o/.data/repo_name
+2024-01-29 17:23:30 - INFO - No previous commits found
+2024-01-29 17:23:30 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - Previous results found
+2024-01-29 17:23:30 - INFO - No previous commits found
+2024-01-29 17:23:30 - INFO - Created directory for results: .data/repo_name
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpiiifpjgu/.data/repo_name
+2024-01-29 17:23:30 - INFO - Previous commits analyzed found
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repo_name/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - Previous results found
+2024-01-29 17:23:30 - INFO - Previous commits analyzed found
+2024-01-29 17:23:30 - INFO - Ignore file found
+2024-01-29 17:23:30 - INFO - Logical coupling tool started
+2024-01-29 17:23:30 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:23:30 - INFO - Loading previous results
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpsq8kda3p/.data/repob:main
+2024-01-29 17:23:30 - INFO - No previous commits found
+2024-01-29 17:23:30 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:23:30 - INFO - Loaded previous results
+2024-01-29 17:23:30 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:23:30 - INFO - No previous commits analyzed
+2024-01-29 17:23:30 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:23:30 - INFO - Analyzed commit def on branch main
+2024-01-29 17:23:30 - INFO - New coupling found 
+2024-01-29 17:23:30 - INFO - Logical coupling tool finished
+2024-01-29 17:23:30 - INFO - Logical coupling tool started
+2024-01-29 17:23:30 - INFO - Cloned repo: .temp/https:__github.com_example_repo.git
+2024-01-29 17:23:30 - INFO - Loading previous results
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/repob:main/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /private/var/folders/k1/23kw474556dc5nt9ghkdmqfm848fbh/T/tmpw485_9ji/.data/repob:main
+2024-01-29 17:23:30 - INFO - No previous commits found
+2024-01-29 17:23:30 - INFO - Created directory for results: .data/repob:main
+2024-01-29 17:23:30 - INFO - Loaded previous results
+2024-01-29 17:23:30 - INFO - Analyzing commits abc on branch main
+2024-01-29 17:23:30 - INFO - No previous commits analyzed
+2024-01-29 17:23:30 - INFO - Analyzed commit abc on branch main
+2024-01-29 17:23:30 - INFO - Analyzed commit def on branch main
+2024-01-29 17:23:30 - INFO - New coupling found 
+2024-01-29 17:23:30 - INFO - Logical coupling tool finished
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/ProjectToTestLogicalCouplingTool/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - Checked out branch my_new_branch
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /Users/ncdaam/PycharmProjects/LogicalCouplingTool/tests/.data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:23:30 - INFO - No previous commits found
+2024-01-29 17:23:30 - INFO - Created directory for results: .data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:23:30 - INFO - Ignore file found
+2024-01-29 17:23:30 - INFO - Loading previous results from .data/ProjectToTestLogicalCouplingTool/LogicalCoupling.csv
+2024-01-29 17:23:30 - INFO - Checked out branch main
+2024-01-29 17:23:30 - INFO - No previous results found
+2024-01-29 17:23:30 - INFO - Created directory for results: /Users/ncdaam/PycharmProjects/LogicalCouplingTool/tests/.data/ProjectToTestLogicalCouplingTool
+2024-01-29 17:23:30 - INFO - Previous commits analyzed found
