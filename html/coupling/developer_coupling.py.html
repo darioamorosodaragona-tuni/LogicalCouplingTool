@@ -1,0 +1,402 @@
+<html><body><h1>coupling/developer_coupling.py</h1>Killed 26 out of 131 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 416</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -13,7 +13,7 @@
+ 
+ 
+ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore_file, path_to_comp_ignore_file):
+-    result = []
++    result = None
+ 
+     if os.path.exists(path_to_data):
+         logger.info("Previous results found")
+</pre><h3>Mutant 424</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -27,7 +27,7 @@
+ 
+     else:
+         logger.info("No previous results found")
+-        os.makedirs(path_to_data, exist_ok=True)
++        os.makedirs(path_to_data, exist_ok=False)
+         logger.debug("Created directory for results: " + os.path.abspath(path_to_data))
+ 
+ 
+</pre><h3>Mutant 427</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -31,7 +31,7 @@
+         logger.debug("Created directory for results: " + os.path.abspath(path_to_data))
+ 
+ 
+-    component_to_ignore = []
++    component_to_ignore = None
+     developer_to_ignore = []
+     if os.path.exists(path_to_comp_ignore_file):
+         logger.info("Components ignore file found")
+</pre><h3>Mutant 428</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -32,7 +32,7 @@
+ 
+ 
+     component_to_ignore = []
+-    developer_to_ignore = []
++    developer_to_ignore = None
+     if os.path.exists(path_to_comp_ignore_file):
+         logger.info("Components ignore file found")
+         with open(path_to_comp_ignore_file, 'r') as file:
+</pre><h3>Mutant 439</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -49,7 +49,7 @@
+         developer_to_ignore = [line.strip() for line in lines]
+         logger.debug(f"Developers to ignore: {developer_to_ignore}")
+ 
+-    component_to_ignore.append('.dev_comp_ignore')
++    component_to_ignore.append('XX.dev_comp_ignoreXX')
+     component_to_ignore.append('.devignore')
+ 
+     return result, component_to_ignore, developer_to_ignore
+</pre><h3>Mutant 440</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -50,7 +50,7 @@
+         logger.debug(f"Developers to ignore: {developer_to_ignore}")
+ 
+     component_to_ignore.append('.dev_comp_ignore')
+-    component_to_ignore.append('.devignore')
++    component_to_ignore.append('XX.devignoreXX')
+ 
+     return result, component_to_ignore, developer_to_ignore
+ 
+</pre><h3>Mutant 442</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -58,7 +58,7 @@
+ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components_to_ignore, devs_to_ignore, data,
+                                    path_to_data):
+     roots = []
+-    developer = ""
++    developer = "XXXX"
+     logger.info(f"Analyzing commit {commit_hash} on branch {branch}")
+ 
+     for commit in pydriller.Repository(path_to_repo, only_commits=commit_hash, only_in_branch=branch).traverse_commits():
+</pre><h3>Mutant 443</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -58,7 +58,7 @@
+ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components_to_ignore, devs_to_ignore, data,
+                                    path_to_data):
+     roots = []
+-    developer = ""
++    developer = None
+     logger.info(f"Analyzing commit {commit_hash} on branch {branch}")
+ 
+     for commit in pydriller.Repository(path_to_repo, only_commits=commit_hash, only_in_branch=branch).traverse_commits():
+</pre><h3>Mutant 447</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -66,7 +66,7 @@
+         if commit.author.email in devs_to_ignore:
+             logger.debug(f"Developer {commit.author.email} ignored")
+             return pandas.DataFrame(
+-                {'COMPONENT': [], 'DEVELOPER': []})
++                {'XXCOMPONENTXX': [], 'DEVELOPER': []})
+ 
+         modified_files = commit.modified_files
+ 
+</pre><h3>Mutant 448</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -66,7 +66,7 @@
+         if commit.author.email in devs_to_ignore:
+             logger.debug(f"Developer {commit.author.email} ignored")
+             return pandas.DataFrame(
+-                {'COMPONENT': [], 'DEVELOPER': []})
++                {'COMPONENT': [], 'XXDEVELOPERXX': []})
+ 
+         modified_files = commit.modified_files
+ 
+</pre><h3>Mutant 473</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -104,7 +104,7 @@
+ 
+                 with open(f"{path_to_data}/{component}", 'a') as file:
+                     logger.debug(f"Adding developer {developer} to component {component}")
+-                    file.write(developer + '\n')
++                    file.write(developer + 'XX\nXX')
+         else:
+             logger.debug(f"Component {component} not found in previous results")
+             with open(f"{path_to_data}/{component}", 'w') as file:
+</pre><h3>Mutant 475</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -107,7 +107,7 @@
+                     file.write(developer + '\n')
+         else:
+             logger.debug(f"Component {component} not found in previous results")
+-            with open(f"{path_to_data}/{component}", 'w') as file:
++            with open(f"XX{path_to_data}/{component}XX", 'w') as file:
+                 logger.debug(f"Created file {path_to_data}/{component}")
+                 logger.debug(f"Adding developer {developer} to component {component}")
+                 file.write(developer + '\n')
+</pre><h3>Mutant 476</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -107,7 +107,7 @@
+                     file.write(developer + '\n')
+         else:
+             logger.debug(f"Component {component} not found in previous results")
+-            with open(f"{path_to_data}/{component}", 'w') as file:
++            with open(f"{path_to_data}/{component}", 'XXwXX') as file:
+                 logger.debug(f"Created file {path_to_data}/{component}")
+                 logger.debug(f"Adding developer {developer} to component {component}")
+                 file.write(developer + '\n')
+</pre><h3>Mutant 479</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -110,7 +110,7 @@
+             with open(f"{path_to_data}/{component}", 'w') as file:
+                 logger.debug(f"Created file {path_to_data}/{component}")
+                 logger.debug(f"Adding developer {developer} to component {component}")
+-                file.write(developer + '\n')
++                file.write(developer - '\n')
+ 
+     return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
+ 
+</pre><h3>Mutant 480</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -110,7 +110,7 @@
+             with open(f"{path_to_data}/{component}", 'w') as file:
+                 logger.debug(f"Created file {path_to_data}/{component}")
+                 logger.debug(f"Adding developer {developer} to component {component}")
+-                file.write(developer + '\n')
++                file.write(developer + 'XX\nXX')
+ 
+     return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
+ 
+</pre><h3>Mutant 491</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -124,7 +124,7 @@
+ 
+ def run(repo_url, branch, commit_hash):
+     try:
+-        exit_code = 0
++        exit_code = 1
+         logger.info("Logical coupling tool started")
+         initialized_data_path = initialize()
+         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
+</pre><h3>Mutant 492</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -124,7 +124,7 @@
+ 
+ def run(repo_url, branch, commit_hash):
+     try:
+-        exit_code = 0
++        exit_code = None
+         logger.info("Logical coupling tool started")
+         initialized_data_path = initialize()
+         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
+</pre><h3>Mutant 494</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -126,7 +126,7 @@
+     try:
+         exit_code = 0
+         logger.info("Logical coupling tool started")
+-        initialized_data_path = initialize()
++        initialized_data_path = None
+         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
+ 
+         commit_hash = commit_hash
+</pre><h3>Mutant 496</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -129,7 +129,7 @@
+         initialized_data_path = initialize()
+         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
+ 
+-        commit_hash = commit_hash
++        commit_hash = None
+         branch = branch
+         repo_url = repo_url
+         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+</pre><h3>Mutant 497</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -130,7 +130,7 @@
+         logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
+ 
+         commit_hash = commit_hash
+-        branch = branch
++        branch = None
+         repo_url = repo_url
+         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 498</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -131,7 +131,7 @@
+ 
+         commit_hash = commit_hash
+         branch = branch
+-        repo_url = repo_url
++        repo_url = None
+         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+         logger.debug(f"Repo name: {repo_name}")
+ 
+</pre><h3>Mutant 509</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -135,7 +135,7 @@
+         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+         logger.debug(f"Repo name: {repo_name}")
+ 
+-        path_to_data = f'.data/{repo_name}/developer_coupling'
++        path_to_data = f'XX.data/{repo_name}/developer_couplingXX'
+         path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
+ 
+         path_to_cloned_repo = clone(repo_url)
+</pre><h3>Mutant 510</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -135,7 +135,7 @@
+         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+         logger.debug(f"Repo name: {repo_name}")
+ 
+-        path_to_data = f'.data/{repo_name}/developer_coupling'
++        path_to_data = None
+         path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
+ 
+         path_to_cloned_repo = clone(repo_url)
+</pre><h3>Mutant 511</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -136,7 +136,7 @@
+         logger.debug(f"Repo name: {repo_name}")
+ 
+         path_to_data = f'.data/{repo_name}/developer_coupling'
+-        path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
++        path_to_data = os.path.relpath(path_to_data, f'XX{os.getcwd()}XX')
+ 
+         path_to_cloned_repo = clone(repo_url)
+ 
+</pre><h3>Mutant 512</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -136,7 +136,7 @@
+         logger.debug(f"Repo name: {repo_name}")
+ 
+         path_to_data = f'.data/{repo_name}/developer_coupling'
+-        path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
++        path_to_data = None
+ 
+         path_to_cloned_repo = clone(repo_url)
+ 
+</pre><h3>Mutant 513</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -138,7 +138,7 @@
+         path_to_data = f'.data/{repo_name}/developer_coupling'
+         path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
+ 
+-        path_to_cloned_repo = clone(repo_url)
++        path_to_cloned_repo = None
+ 
+         logger.info(f"Cloned repo: {path_to_cloned_repo}")
+ 
+</pre><h3>Mutant 515</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -142,7 +142,7 @@
+ 
+         logger.info(f"Cloned repo: {path_to_cloned_repo}")
+ 
+-        path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
++        path_to_dev_ignore_file = f'XX{path_to_cloned_repo}/.devignoreXX'
+         path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
+ 
+         logger.debug(f"Path to dev ignore file: {path_to_dev_ignore_file}")
+</pre><h3>Mutant 516</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -142,7 +142,7 @@
+ 
+         logger.info(f"Cloned repo: {path_to_cloned_repo}")
+ 
+-        path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
++        path_to_dev_ignore_file = None
+         path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
+ 
+         logger.debug(f"Path to dev ignore file: {path_to_dev_ignore_file}")
+</pre><h3>Mutant 517</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -143,7 +143,7 @@
+         logger.info(f"Cloned repo: {path_to_cloned_repo}")
+ 
+         path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
+-        path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
++        path_to_comp_ignore_file = f'XX{path_to_cloned_repo}/.dev_comp_ignoreXX'
+ 
+         logger.debug(f"Path to dev ignore file: {path_to_dev_ignore_file}")
+         logger.debug(f"Path to comp ignore file: {path_to_comp_ignore_file}")
+</pre><h3>Mutant 518</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -143,7 +143,7 @@
+         logger.info(f"Cloned repo: {path_to_cloned_repo}")
+ 
+         path_to_dev_ignore_file = f'{path_to_cloned_repo}/.devignore'
+-        path_to_comp_ignore_file = f'{path_to_cloned_repo}/.dev_comp_ignore'
++        path_to_comp_ignore_file = None
+ 
+         logger.debug(f"Path to dev ignore file: {path_to_dev_ignore_file}")
+         logger.debug(f"Path to comp ignore file: {path_to_comp_ignore_file}")
+</pre><h3>Mutant 522</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -153,11 +153,7 @@
+         util.checkout(path_to_cloned_repo, branch, logger)
+         util.pull(path_to_cloned_repo, logger)
+ 
+-        data, components_to_ignore, developers_to_ignore = load_previous_results(path_to_data,
+-                                                                                 path_to_cloned_repo,
+-                                                                                 branch,
+-                                                                                 path_to_dev_ignore_file,
+-                                                                                 path_to_comp_ignore_file)
++        data, components_to_ignore, developers_to_ignore = None
+         logger.info(f"Loaded previous results")
+         logger.debug(f"Data: {data}")
+         logger.debug(f"Components to ignore: {components_to_ignore}")
+</pre><h3>Mutant 527</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -163,8 +163,7 @@
+         logger.debug(f"Components to ignore: {components_to_ignore}")
+         logger.debug(f"Developers to ignore: {developers_to_ignore}")
+ 
+-        new_data = analyze_and_save_actual_commit(path_to_cloned_repo, branch, commit_hash, components_to_ignore,
+-                                                  developers_to_ignore, data, path_to_data)
++        new_data = None
+ 
+         logger.info(f"Analyzed actual commit")
+         logger.debug(f"New data: new_data")
+</pre><h3>Mutant 532</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -171,7 +171,7 @@
+         message = alert_message(new_data)
+         logger.debug(f"Message: {message}")
+ 
+-        if not new_data.empty:
++        if  new_data.empty:
+             logger.info("New coupling found")
+             exit_code = 1, message
+ 
+</pre><h3>Mutant 537</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -180,7 +180,7 @@
+         logger.error(e)
+         logger.debug(f"Error in developer coupling tool")
+         logger.debug(traceback.format_exc())
+-        exit_code = -1
++        exit_code = +1
+         message = "Error in developer coupling tool"
+         logger.info("Error in developer coupling tool")
+ 
+</pre><h3>Mutant 538</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -180,7 +180,7 @@
+         logger.error(e)
+         logger.debug(f"Error in developer coupling tool")
+         logger.debug(traceback.format_exc())
+-        exit_code = -1
++        exit_code = -2
+         message = "Error in developer coupling tool"
+         logger.info("Error in developer coupling tool")
+ 
+</pre><h3>Mutant 539</h3><pre>--- coupling/developer_coupling.py
++++ coupling/developer_coupling.py
+@@ -180,7 +180,7 @@
+         logger.error(e)
+         logger.debug(f"Error in developer coupling tool")
+         logger.debug(traceback.format_exc())
+-        exit_code = -1
++        exit_code = None
+         message = "Error in developer coupling tool"
+         logger.info("Error in developer coupling tool")
+ 
+</pre></body></html>

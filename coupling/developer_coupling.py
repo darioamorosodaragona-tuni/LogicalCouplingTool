@@ -3,9 +3,11 @@ import os
 import shutil
 import traceback
 
-import pandas
+from pandas import DataFrame
 import pydriller
-
+#
+# from coupling import util
+# from coupling.util import clone, checkout, initialize, root_calculator
 import util
 from util import clone, checkout, initialize, root_calculator
 
@@ -30,7 +32,6 @@ def load_previous_results(path_to_data, path_to_repo, branch, path_to_dev_ignore
         os.makedirs(path_to_data, exist_ok=True)
         logger.debug("Created directory for results: " + os.path.abspath(path_to_data))
 
-    checkout(path_to_repo, branch, logger)
 
     component_to_ignore = []
     developer_to_ignore = []
@@ -66,7 +67,7 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
 
         if commit.author.email in devs_to_ignore:
             logger.debug(f"Developer {commit.author.email} ignored")
-            return pandas.DataFrame(
+            return DataFrame(
                 {'COMPONENT': [], 'DEVELOPER': []})
 
         modified_files = commit.modified_files
@@ -108,12 +109,12 @@ def analyze_and_save_actual_commit(path_to_repo, branch, commit_hash, components
                     file.write(developer + '\n')
         else:
             logger.debug(f"Component {component} not found in previous results")
-            with open(f"{path_to_data}/{component}", 'w+') as file:
+            with open(f"{path_to_data}/{component}", 'w') as file:
                 logger.debug(f"Created file {path_to_data}/{component}")
                 logger.debug(f"Adding developer {developer} to component {component}")
                 file.write(developer + '\n')
 
-    return pandas.DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
+    return DataFrame({'COMPONENT': components_to_alert, 'DEVELOPER': [developer] * len(components_to_alert)})
 
 
 def alert_message(data):
@@ -150,6 +151,10 @@ def run(repo_url, branch, commit_hash):
         logger.debug(f"Path to comp ignore file: {path_to_comp_ignore_file}")
 
         logger.info(f"Loading previous results")
+
+        util.checkout(path_to_cloned_repo, branch, logger)
+        util.pull(path_to_cloned_repo, logger)
+
         data, components_to_ignore, developers_to_ignore = load_previous_results(path_to_data,
                                                                                  path_to_cloned_repo,
                                                                                  branch,
@@ -183,7 +188,7 @@ def run(repo_url, branch, commit_hash):
 
     finally:
         logger.debug("Removing temporary files")
-        shutil.rmtree('.temp/', ignore_errors=True)
+        # shutil.rmtree('.temp/', ignore_errors=True)
 
     logger.info("Developer coupling tool finished")
     return exit_code, message, []

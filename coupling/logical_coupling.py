@@ -382,8 +382,7 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
         logger.info(f"Loading previous results")
 
         util.checkout(path_to_cloned_repo, branch, logger)
-
-        util.pull(path_to_cloned_repo, branch, logger)
+        util.pull(path_to_cloned_repo, logger)
 
         data, components_to_ignore, commits_analyzed = load_previous_results(repo_name, path_to_cloned_repo)
 

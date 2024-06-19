@@ -21,7 +21,6 @@ def is_remote_git_repo(repo_path):
 
 
 def clone(repo_url):
-
     path = f".temp/{repo_url.replace('/', '_').replace(' https://', '')}"
     if not os.path.exists(path):
         if is_remote_git_repo(repo_url):
@@ -36,13 +35,11 @@ def clone(repo_url):
         return path
 
 
-def pull(path_to_repo, branch, logger):
+def pull(path_to_repo, logger):
     logger.debug(f"Path to repo: {path_to_repo}")
-    logger.debug(f"Pulling branch {branch}")
+    logger.info(f"Pulling repo")
     repo = Repo(path_to_repo)
     repo.remotes.origin.pull()
-    logger.info(f"Pulled branch {branch}")
-
 
 
 def checkout(path_to_repo, branch, logger):

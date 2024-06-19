@@ -1,17 +1,127 @@
-<html><body><h1>coupling/logical_coupling.py</h1>Killed 235 out of 340 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 37</h3><pre>--- coupling/logical_coupling.py
+<html><body><h1>coupling/logical_coupling.py</h1>Killed 196 out of 360 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 72</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -64,7 +64,7 @@
-         os.makedirs(file, exist_ok=True)
-         logger.info("Created directory for results: " + file)
-         commits_analyzed_dataframe = pandas.DataFrame(columns=['COMMITS ANALYZED'])
--        commits_analyzed_dataframe.to_csv(commits_analyzed, index=False)
-+        commits_analyzed_dataframe.to_csv(commits_analyzed, index=True)
+@@ -125,7 +125,7 @@
+         repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze,
+                                           only_in_branch=branch)
  
-     component_to_ignore = []
-     logger.debug(f"Checking if ignore file exists: {ignore}")
-</pre><h3>Mutant 97</h3><pre>--- coupling/logical_coupling.py
+-    total_modified_files = 0
++    total_modified_files = 1
+     for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
+                             leave=True):
+         result = []
+</pre><h3>Mutant 74</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -166,7 +166,7 @@
+@@ -126,7 +126,7 @@
+                                           only_in_branch=branch)
+ 
+     total_modified_files = 0
+-    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
++    for commit in tqdm.tqdm(repository.traverse_commits(), desc="XXAnalyzing commitsXX", unit="commit", position=0,
+                             leave=True):
+         result = []
+ 
+</pre><h3>Mutant 75</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -126,7 +126,7 @@
+                                           only_in_branch=branch)
+ 
+     total_modified_files = 0
+-    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
++    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="XXcommitXX", position=0,
+                             leave=True):
+         result = []
+ 
+</pre><h3>Mutant 76</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -126,7 +126,7 @@
+                                           only_in_branch=branch)
+ 
+     total_modified_files = 0
+-    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
++    for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=1,
+                             leave=True):
+         result = []
+ 
+</pre><h3>Mutant 77</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -127,7 +127,7 @@
+ 
+     total_modified_files = 0
+     for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
+-                            leave=True):
++                            leave=False):
+         result = []
+ 
+         # if commit.hash == last_commit_analyzed:
+</pre><h3>Mutant 80</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -135,7 +135,7 @@
+         #     continue
+ 
+         modified_files = commit.modified_files
+-        total_modified_files += len(modified_files)
++        total_modified_files = len(modified_files)
+ 
+         for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
+             logger.debug(f"Modified file: {files.new_path}")
+</pre><h3>Mutant 81</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -135,7 +135,7 @@
+         #     continue
+ 
+         modified_files = commit.modified_files
+-        total_modified_files += len(modified_files)
++        total_modified_files -= len(modified_files)
+ 
+         for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
+             logger.debug(f"Modified file: {files.new_path}")
+</pre><h3>Mutant 82</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -137,7 +137,7 @@
+         modified_files = commit.modified_files
+         total_modified_files += len(modified_files)
+ 
+-        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
++        for files in tqdm.tqdm(modified_files, desc="XXAnalyzing filesXX", unit="file", position=1, leave=False):
+             logger.debug(f"Modified file: {files.new_path}")
+             if files.new_path is None:
+                 continue
+</pre><h3>Mutant 83</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -137,7 +137,7 @@
+         modified_files = commit.modified_files
+         total_modified_files += len(modified_files)
+ 
+-        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
++        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="XXfileXX", position=1, leave=False):
+             logger.debug(f"Modified file: {files.new_path}")
+             if files.new_path is None:
+                 continue
+</pre><h3>Mutant 84</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -137,7 +137,7 @@
+         modified_files = commit.modified_files
+         total_modified_files += len(modified_files)
+ 
+-        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
++        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=2, leave=False):
+             logger.debug(f"Modified file: {files.new_path}")
+             if files.new_path is None:
+                 continue
+</pre><h3>Mutant 85</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -137,7 +137,7 @@
+         modified_files = commit.modified_files
+         total_modified_files += len(modified_files)
+ 
+-        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=False):
++        for files in tqdm.tqdm(modified_files, desc="Analyzing files", unit="file", position=1, leave=True):
+             logger.debug(f"Modified file: {files.new_path}")
+             if files.new_path is None:
+                 continue
+</pre><h3>Mutant 110</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -169,7 +169,7 @@
  
          logger.info(f"Analyzed commit {commit.hash} on branch {branch}")
  
@@ -20,64 +130,9 @@
              logger.debug("No new coupling found in commit " + commit.hash)
  
          commits_analyzed.append(commit.hash)
-</pre><h3>Mutant 131</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 236</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -229,7 +229,7 @@
- 
-     # Drop unnecessary columns
-     merged_df = merged_df[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE']]
--    merged_df['LC_VALUE'] = merged_df['LC_VALUE'].astype(int)
-+    merged_df['XXLC_VALUEXX'] = merged_df['LC_VALUE'].astype(int)
- 
-     return merged_df
- 
-</pre><h3>Mutant 171</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -264,7 +264,7 @@
- 
-     logger.debug(f"New coupling: {new_coupling}")
- 
--    to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
-+    to_alert['XXCOMPONENT 1XX'] = to_alert['COMPONENT 1'].astype(str)
-     to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
-     new_coupling['COMPONENT 1'] = new_coupling['COMPONENT 1'].astype(str)
-     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
-</pre><h3>Mutant 174</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -265,7 +265,7 @@
-     logger.debug(f"New coupling: {new_coupling}")
- 
-     to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
--    to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
-+    to_alert['XXCOMPONENT 2XX'] = to_alert['COMPONENT 2'].astype(str)
-     new_coupling['COMPONENT 1'] = new_coupling['COMPONENT 1'].astype(str)
-     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
-     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
-</pre><h3>Mutant 177</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -266,7 +266,7 @@
- 
-     to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
-     to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
--    new_coupling['COMPONENT 1'] = new_coupling['COMPONENT 1'].astype(str)
-+    new_coupling['XXCOMPONENT 1XX'] = new_coupling['COMPONENT 1'].astype(str)
-     new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
-     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
- 
-</pre><h3>Mutant 180</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -267,7 +267,7 @@
-     to_alert['COMPONENT 1'] = to_alert['COMPONENT 1'].astype(str)
-     to_alert['COMPONENT 2'] = to_alert['COMPONENT 2'].astype(str)
-     new_coupling['COMPONENT 1'] = new_coupling['COMPONENT 1'].astype(str)
--    new_coupling['COMPONENT 2'] = new_coupling['COMPONENT 2'].astype(str)
-+    new_coupling['XXCOMPONENT 2XX'] = new_coupling['COMPONENT 2'].astype(str)
-     to_alert = pd.merge(to_alert, new_coupling, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
- 
-     to_alert['LC_VALUE_OLD'] = to_alert['LC_VALUE_OLD_x'].combine_first(to_alert['LC_VALUE_OLD_y'])
-</pre><h3>Mutant 225</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -301,7 +301,7 @@
+@@ -307,7 +307,7 @@
         - str: Generated alert messages.
         """
      message = ""
@@ -86,9 +141,9 @@
      for index, row in increasing_data.iterrows():
          if commit != row['COMMIT']:
              commit = row['COMMIT']
-</pre><h3>Mutant 226</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 237</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -301,7 +301,7 @@
+@@ -307,7 +307,7 @@
         - str: Generated alert messages.
         """
      message = ""
@@ -97,86 +152,9 @@
      for index, row in increasing_data.iterrows():
          if commit != row['COMMIT']:
              commit = row['COMMIT']
-</pre><h3>Mutant 243</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 293</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -308,7 +308,7 @@
-             message += f"Commit {commit}:\n"
- 
-         if row['OLD_LC_VALUE'] >= 5:
--            message += f"INFO: {row['COMPONENT 1']} and {row['COMPONENT 2']}: COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n)"
-+            message += f"XXINFO: {row['COMPONENT 1']} and {row['COMPONENT 2']}: COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n)XX"
-         elif row['NEW_LC_VALUE'] >= 5:
-             message += f"ERROR: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NOW COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n"
-         elif row['NEW_LC_VALUE'] == 1:
-</pre><h3>Mutant 253</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -310,7 +310,7 @@
-         if row['OLD_LC_VALUE'] >= 5:
-             message += f"INFO: {row['COMPONENT 1']} and {row['COMPONENT 2']}: COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n)"
-         elif row['NEW_LC_VALUE'] >= 5:
--            message += f"ERROR: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NOW COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n"
-+            message += f"XXERROR: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NOW COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\nXX"
-         elif row['NEW_LC_VALUE'] == 1:
-             message += f"WARNING: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NEW COUPLING\n"
-         else:
-</pre><h3>Mutant 261</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -312,7 +312,7 @@
-         elif row['NEW_LC_VALUE'] >= 5:
-             message += f"ERROR: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NOW COUPLED. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n"
-         elif row['NEW_LC_VALUE'] == 1:
--            message += f"WARNING: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NEW COUPLING\n"
-+            message += f"XXWARNING: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NEW COUPLING\nXX"
-         else:
-             message += f"WARNING:  {row['COMPONENT 1']} and {row['COMPONENT 2']}: IN COUPLING. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n"
-     return message
-</pre><h3>Mutant 268</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -314,7 +314,7 @@
-         elif row['NEW_LC_VALUE'] == 1:
-             message += f"WARNING: {row['COMPONENT 1']} and {row['COMPONENT 2']}: NEW COUPLING\n"
-         else:
--            message += f"WARNING:  {row['COMPONENT 1']} and {row['COMPONENT 2']}: IN COUPLING. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\n"
-+            message += f"XXWARNING:  {row['COMPONENT 1']} and {row['COMPONENT 2']}: IN COUPLING. (Value increased from {row['OLD_LC_VALUE']} to {row['NEW_LC_VALUE']})\nXX"
-     return message
- 
- 
-</pre><h3>Mutant 272</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -330,7 +330,7 @@
-        """
-     file = f'.data/{repo_name}/LogicalCoupling.csv'
-     file = os.path.relpath(file, os.getcwd())
--    data.to_csv(file, index=False)
-+    data.to_csv(file, index=True)
-     file_commits = f'.data/{repo_name}/analyzed.csv'
-     file_commits = os.path.relpath(file_commits, os.getcwd())
-     new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
-</pre><h3>Mutant 276</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -333,7 +333,7 @@
-     data.to_csv(file, index=False)
-     file_commits = f'.data/{repo_name}/analyzed.csv'
-     file_commits = os.path.relpath(file_commits, os.getcwd())
--    new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
-+    new_commits_analyzed = pd.DataFrame({'XXCOMMITS ANALYZEDXX': new_commits_analyzed})
-     commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])
-     commits_analyzed.to_csv(file_commits, index=False)
- 
-</pre><h3>Mutant 279</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -335,7 +335,7 @@
-     file_commits = os.path.relpath(file_commits, os.getcwd())
-     new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
-     commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])
--    commits_analyzed.to_csv(file_commits, index=False)
-+    commits_analyzed.to_csv(file_commits, index=True)
- 
- 
- def run(repo_url, branch, commit_hash):
-</pre><h3>Mutant 282</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -356,7 +356,7 @@
+@@ -362,7 +362,7 @@
      logger = util.setup_logging('logical_coupling')
  
      try:
@@ -185,9 +163,9 @@
          logger.info("Logical coupling tool started")
          initialized_data_path = util.initialize()
          logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
-</pre><h3>Mutant 283</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 294</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -356,7 +356,7 @@
+@@ -362,7 +362,7 @@
      logger = util.setup_logging('logical_coupling')
  
      try:
@@ -196,86 +174,218 @@
          logger.info("Logical coupling tool started")
          initialized_data_path = util.initialize()
          logger.debug(f"Initialized: {initialized_data_path}, absolute path: {os.path.abspath(initialized_data_path)}")
-</pre><h3>Mutant 300</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 301</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -367,7 +367,7 @@
-         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('XXhttps:XX', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 302</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', 'XXXX').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 303</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('XXgit:XX', '').split('/')[-1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 304</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', 'XXXX').split('/')[-1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 305</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('XX/XX')[-1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 306</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[+1].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 307</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-2].split('.')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 308</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('XX.XX')[0] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 309</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[1] + "b:" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 311</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "XXb:XX" + branch
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 313</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -370,7 +370,7 @@
+         commit_hash = commit_hash
+         branch = branch
+         repo_url = repo_url
+-        repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0] + "b:" + branch
++        repo_name = None
+         # repo_name = repo_url.replace('https:', '').replace('git:', '').split('/')[-1].split('.')[0]
+ 
+         logger.debug(f"Repo name: {repo_name}")
+</pre><h3>Mutant 315</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -375,7 +375,7 @@
+ 
          logger.debug(f"Repo name: {repo_name}")
  
--        path_to_cloned_repo =util.clone(repo_url)
+-        path_to_cloned_repo = util.clone(repo_url)
 +        path_to_cloned_repo = None
  
          logger.info(f"Cloned repo: {path_to_cloned_repo}")
  
-</pre><h3>Mutant 313</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 323</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -385,7 +385,7 @@
-             logger.debug(f"Commits analyzed: {commits_analyzed}")
-             logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+@@ -390,7 +390,7 @@
+         logger.debug(f"Data: {data}")
+         logger.debug(f"Components to ignore: {components_to_ignore}")
  
--            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
-+            last_commit = commits_analyzed.iloc[+1]['COMMITS ANALYZED']
- 
-         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
-                                                          components_to_ignore)
-</pre><h3>Mutant 314</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -385,7 +385,7 @@
-             logger.debug(f"Commits analyzed: {commits_analyzed}")
-             logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
- 
--            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
-+            last_commit = commits_analyzed.iloc[-2]['COMMITS ANALYZED']
- 
-         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
-                                                          components_to_ignore)
-</pre><h3>Mutant 315</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -385,7 +385,7 @@
-             logger.debug(f"Commits analyzed: {commits_analyzed}")
-             logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
- 
--            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
-+            last_commit = commits_analyzed.iloc[-1]['XXCOMMITS ANALYZEDXX']
- 
-         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
-                                                          components_to_ignore)
-</pre><h3>Mutant 316</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -385,7 +385,7 @@
-             logger.debug(f"Commits analyzed: {commits_analyzed}")
-             logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
- 
--            last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
-+            last_commit = None
- 
-         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
-                                                          components_to_ignore)
-</pre><h3>Mutant 319</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -392,7 +392,7 @@
- 
-         if new_data.empty:
-             logger.info("No new coupling found ")
--            messages = ""
-+            messages = "XXXX"
-             commits = []
+-        if commits_analyzed.empty and last_commit_analyzed is None:
++        if commits_analyzed.empty or last_commit_analyzed is None:
+             last_commit = None
          else:
-             logger.info("New coupling found ")
-</pre><h3>Mutant 320</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -392,7 +392,7 @@
- 
-         if new_data.empty:
-             logger.info("No new coupling found ")
--            messages = ""
-+            messages = None
-             commits = []
-         else:
-             logger.info("New coupling found ")
-</pre><h3>Mutant 321</h3><pre>--- coupling/logical_coupling.py
+             if not commits_analyzed.empty:
+</pre><h3>Mutant 325</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
 @@ -393,7 +393,7 @@
+         if commits_analyzed.empty and last_commit_analyzed is None:
+             last_commit = None
+         else:
+-            if not commits_analyzed.empty:
++            if  commits_analyzed.empty:
+                 logger.debug(f"Commits analyzed: {commits_analyzed}")
+                 logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+ 
+</pre><h3>Mutant 331</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -397,7 +397,7 @@
+                 logger.debug(f"Commits analyzed: {commits_analyzed}")
+                 logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+ 
+-                last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
++                last_commit = commits_analyzed.iloc[+1]['COMMITS ANALYZED']
+             elif last_commit_analyzed:
+                 last_commit = last_commit_analyzed
+ 
+</pre><h3>Mutant 332</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -397,7 +397,7 @@
+                 logger.debug(f"Commits analyzed: {commits_analyzed}")
+                 logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+ 
+-                last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
++                last_commit = commits_analyzed.iloc[-2]['COMMITS ANALYZED']
+             elif last_commit_analyzed:
+                 last_commit = last_commit_analyzed
+ 
+</pre><h3>Mutant 333</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -397,7 +397,7 @@
+                 logger.debug(f"Commits analyzed: {commits_analyzed}")
+                 logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+ 
+-                last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
++                last_commit = commits_analyzed.iloc[-1]['XXCOMMITS ANALYZEDXX']
+             elif last_commit_analyzed:
+                 last_commit = last_commit_analyzed
+ 
+</pre><h3>Mutant 334</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -397,7 +397,7 @@
+                 logger.debug(f"Commits analyzed: {commits_analyzed}")
+                 logger.debug(f"Last commit analyzed: {commits_analyzed.iloc[-1]['COMMITS ANALYZED']}")
+ 
+-                last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
++                last_commit = None
+             elif last_commit_analyzed:
+                 last_commit = last_commit_analyzed
+ 
+</pre><h3>Mutant 335</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -399,7 +399,7 @@
+ 
+                 last_commit = commits_analyzed.iloc[-1]['COMMITS ANALYZED']
+             elif last_commit_analyzed:
+-                last_commit = last_commit_analyzed
++                last_commit = None
+ 
+         new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
+                                                          components_to_ignore)
+</pre><h3>Mutant 340</h3><pre>--- coupling/logical_coupling.py
++++ coupling/logical_coupling.py
+@@ -407,7 +407,7 @@
          if new_data.empty:
              logger.info("No new coupling found ")
              messages = ""
@@ -284,9 +394,9 @@
          else:
              logger.info("New coupling found ")
              exit_code = 1
-</pre><h3>Mutant 329</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 348</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -401,7 +401,7 @@
+@@ -415,7 +415,7 @@
              alert_data = alert(new_data, data)
              logger.debug(f"Alert data: {alert_data}")
              messages = alert_messages(alert_data)
@@ -295,9 +405,9 @@
              new_data.drop('COMMIT', axis=1, inplace=True)
              logger.debug(f"New Data: {new_data}")
              merged_data = update_data(data, new_data)
-</pre><h3>Mutant 332</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 351</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -402,7 +402,7 @@
+@@ -416,7 +416,7 @@
              logger.debug(f"Alert data: {alert_data}")
              messages = alert_messages(alert_data)
              commits = new_data['COMMIT']
@@ -306,9 +416,9 @@
              logger.debug(f"New Data: {new_data}")
              merged_data = update_data(data, new_data)
              save(merged_data, repo_name, new_commits_analyzed, commits_analyzed)
-</pre><h3>Mutant 338</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 357</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -415,7 +415,7 @@
+@@ -429,7 +429,7 @@
          logger.error(e)
          logger.error(traceback.format_exc())
          logger.info("Logical coupling tool finished with error")
@@ -317,9 +427,9 @@
  
      finally:
          logger.debug("Deleting temporary files")
-</pre><h3>Mutant 339</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 358</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -415,7 +415,7 @@
+@@ -429,7 +429,7 @@
          logger.error(e)
          logger.error(traceback.format_exc())
          logger.info("Logical coupling tool finished with error")
@@ -328,9 +438,9 @@
  
      finally:
          logger.debug("Deleting temporary files")
-</pre><h3>Mutant 340</h3><pre>--- coupling/logical_coupling.py
+</pre><h3>Mutant 359</h3><pre>--- coupling/logical_coupling.py
 +++ coupling/logical_coupling.py
-@@ -415,7 +415,7 @@
+@@ -429,7 +429,7 @@
          logger.error(e)
          logger.error(traceback.format_exc())
          logger.info("Logical coupling tool finished with error")
@@ -339,14 +449,4 @@
  
      finally:
          logger.debug("Deleting temporary files")
-</pre><h3>Mutant 342</h3><pre>--- coupling/logical_coupling.py
-+++ coupling/logical_coupling.py
-@@ -419,5 +419,5 @@
- 
-     finally:
-         logger.debug("Deleting temporary files")
--        shutil.rmtree('.temp/', ignore_errors=True)
--
-+        shutil.rmtree('XX.temp/XX', ignore_errors=True)
-+
 </pre></body></html>

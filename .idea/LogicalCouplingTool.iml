@@ -7,8 +7,9 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/old/LogicalCouplingDB" />
       <excludeFolder url="file://$MODULE_DIR$/old/LogicalCouplingNoDb" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv_3.10" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (LogicalCouplingTool)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

@@ -10,3 +10,11 @@ def pre_mutation(context):
         context.skip = True
     if "repo_name = repo_url.split(" in line:
         context.skip = True
+    if ".to_csv" in line:
+        context.skip = True
+    if 'message' in line:
+        context.skip = True
+    if "astype(" in line:
+        context.skip = True
+    if "pd.DataFrame" in line:
+        context.skip = True

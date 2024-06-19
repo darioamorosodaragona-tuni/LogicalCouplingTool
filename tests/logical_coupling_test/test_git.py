@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 
 from git import Repo
 
-import util
+import coupling.util
 from coupling.logical_coupling import analyze_commits, load_previous_results
 
 
@@ -46,20 +46,20 @@ class TestLoader(unittest.TestCase):
 
         git.checkout('main')
 
-        with patch('util.logging') as mock_logger:
+        with patch('coupling.util.logging') as mock_logger:
             mock_info = MagicMock()
             mock_logger.info = mock_info
-            util.checkout(self.path, 'my_new_branch', mock_logger)
+            coupling.util.checkout(self.path, 'my_new_branch', mock_logger)
 
         _, component_to_ignore, _ = load_previous_results("ProjectToTestLogicalCouplingTool", self.path)
         expected = ["component1/*", lcignore]
 
         self.assertTrue(component_to_ignore == expected, "Load failed.")
 
-        with patch('util.logging') as mock_logger:
+        with patch('coupling.util.logging') as mock_logger:
             mock_info = MagicMock()
             mock_logger.info = mock_info
-            util.checkout(self.path, 'main', mock_logger)
+            coupling.util.checkout(self.path, 'main', mock_logger)
 
         _, component_to_ignore, _ = load_previous_results("ProjectToTestLogicalCouplingTool", self.path)
         expected = []
