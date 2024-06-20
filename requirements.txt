@@ -1,5 +1,7 @@
+Flask
+Flask-Caching
+Celery
+redis
 pandas
 PyDriller
-neomodel
-neo4j
-Flask
+tqdm

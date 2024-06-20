@@ -1,9 +1,35 @@
-FROM python:3.7.4-slim-buster
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
 
-WORKDIR /logical_coupling
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y gcc git nginx && \
+    apt-get clean
 
-ADD . /logical_coupling
+# Set the working directory in the container
+WORKDIR /app
 
-RUN pip install -r requirements.txt
+# Copy the requirements file into the container at /app
+COPY requirements.txt .
 
-ENTRYPOINT ["python", "main.py"]
+# Install any dependencies specified in requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy the rest of the application code into the container at /app
+COPY . .
+
+# Copy the Nginx configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV FLASK_APP=coupling.main
+
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app
+
+# Run the application
+CMD service nginx start && python -m coupling.main

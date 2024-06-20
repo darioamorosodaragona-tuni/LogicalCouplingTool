@@ -12,7 +12,7 @@ import pydriller
 import tqdm
 
 # from .util import *
-from coupling import util
+from . import util
 
 logger = util.setup_logging('logical_coupling')
 
@@ -32,8 +32,8 @@ def load_previous_results(repo_name, path_to_repo):
     - commits_analyzed_dataframe (pd.DataFrame): DataFrame containing previously analyzed commits.
     """
 
-    commits_analyzed = f'.data/{repo_name}/analyzed.csv'
-    file = f'.data/{repo_name}/LogicalCoupling.csv'
+    commits_analyzed = f'/app/.data/{repo_name}/analyzed.csv'
+    file = f'/app/.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
 
     logger.info(f"Loading previous results from {file}")
@@ -46,7 +46,7 @@ def load_previous_results(repo_name, path_to_repo):
         logger.debug(f"Previous results: {data}")
     else:
         logger.info(f"No previous results found")
-        file = f'.data/{repo_name}'
+        file = f'/app/.data/{repo_name}'
         file = os.path.relpath(file, os.getcwd())
         os.makedirs(file, exist_ok=True)
         logger.info("Created directory for results: " + os.path.abspath(file))
@@ -58,7 +58,7 @@ def load_previous_results(repo_name, path_to_repo):
         logger.debug(f"Previous results: {commits_analyzed_dataframe}")
     else:
         logger.info(f"No previous commits found")
-        file = f'.data/{repo_name}'
+        file = f'/app/.data/{repo_name}'
         file = os.path.relpath(file, os.getcwd())
         os.makedirs(file, exist_ok=True)
         logger.info("Created directory for results: " + file)
@@ -334,10 +334,10 @@ def save(data, repo_name, new_commits_analyzed, commits_analyzed):
        - new_commits_analyzed (list): Newly analyzed commits.
        - commits_analyzed (pd.DataFrame): Previously analyzed commits.
        """
-    file = f'.data/{repo_name}/LogicalCoupling.csv'
+    file = f'/app/.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
     data.to_csv(file, index=False)
-    file_commits = f'.data/{repo_name}/analyzed.csv'
+    file_commits = f'/app/.data/{repo_name}/analyzed.csv'
     file_commits = os.path.relpath(file_commits, os.getcwd())
     new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
     commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])

@@ -8,8 +8,8 @@ import pydriller
 #
 # from coupling import util
 # from coupling.util import clone, checkout, initialize, root_calculator
-import util
-from util import clone, checkout, initialize, root_calculator
+from . import util
+from .util import clone, checkout, initialize, root_calculator
 
 logger = util.setup_logging('developer_coupling')
 
@@ -137,7 +137,7 @@ def run(repo_url, branch, commit_hash):
         repo_name = repo_url.split('/')[-1].split('.')[0] + "b:" + branch
         logger.debug(f"Repo name: {repo_name}")
 
-        path_to_data = f'.data/{repo_name}/developer_coupling'
+        path_to_data = f'/app/.data/{repo_name}/developer_coupling'
         path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
 
         path_to_cloned_repo = clone(repo_url)
