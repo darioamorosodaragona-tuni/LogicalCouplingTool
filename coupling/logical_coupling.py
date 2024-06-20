@@ -118,6 +118,9 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         repo = git.Repo(path_to_repo)
         logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
         logger.debug(f"Analyzing commits {commits} on branch {branch}")
+        if len(commits)<1:
+            logger.info("No new commits to analyze")
+            return pd.DataFrame(), pd.DataFrame(), commits_analyzed
         commits_to_analyze = repo.git.execute(['git', 'rev-list', '--ancestry-path',
                                                '%s..%s' % (last_commit_analyzed, commits[0])]).split()
         logger.debug(f"Commits to analyze: {commits_to_analyze}")
@@ -165,7 +168,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
         for comb in combinations_sorted:
             rows.append(
                 {'COMPONENT 1': convertFromNumber(comb[0]), 'COMPONENT 2': convertFromNumber(comb[1]), 'LC_VALUE': 1,
-                 'COMMIT': commit.hash})
+                 'COMMIT': commit.hash, 'DATE': commit.committer_date, 'TIMEZONE': commit.committer_timezone})
 
         logger.info(f"Analyzed commit {commit.hash} on branch {branch}")
 
@@ -180,16 +183,16 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
     if result.empty:
         logger.info("No new coupling found")
-        return result, commits_analyzed
+        return result, result, commits_analyzed
 
-    grouped_df = result.groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
+    grouped_df = result.drop(columns=["DATE", 'TIMEZONE'], inplace=False).groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
         'LC_VALUE': 'sum',
         'COMMIT': lambda x: list(x)
     }).reset_index()
 
     # Rename the 'LC_VALUE' column to the original name
     # grouped_df = grouped_df.rename(columns={'LC_VALUE': 'LC_VALUE'})
-    return grouped_df, commits_analyzed
+    return result, grouped_df, commits_analyzed
 
 
 def convertToNumber(s):
@@ -324,7 +327,7 @@ def alert_messages(increasing_data):
     return message
 
 
-def save(data, repo_name, new_commits_analyzed, commits_analyzed):
+def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed):
     """
        Save logical coupling data and analyzed commits to CSV files.
 
@@ -343,6 +346,16 @@ def save(data, repo_name, new_commits_analyzed, commits_analyzed):
     commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])
     commits_analyzed.to_csv(file_commits, index=False)
 
+    file = f'/app/.data/{repo_name}/LogicalCoupling.history'
+    file = os.path.relpath(file, os.getcwd())
+
+    for index,row in detailed_data.iterrows():
+        comp1 = row["COMPONENT 1"]
+        comp2 = row["COMPONENT 2"]
+        lc_value = data[(data["COMPONENT 1"] == comp1) & (data["COMPONENT 2"] == comp2)]["LC_VALUE"]
+        row["SUMMED_LC_VALUE"] = lc_value
+
+    detailed_data.to_csv(file, index=False, mode='a', header=False)
 
 def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
     """
@@ -401,7 +414,7 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
             elif last_commit_analyzed:
                 last_commit = last_commit_analyzed
 
-        new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
+        detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
                                                          components_to_ignore)
 
         if new_data.empty:
@@ -419,7 +432,7 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
             new_data.drop('COMMIT', axis=1, inplace=True)
             logger.debug(f"New Data: {new_data}")
             merged_data = update_data(data, new_data)
-            save(merged_data, repo_name, new_commits_analyzed, commits_analyzed)
+            save(detailed_results, merged_data, repo_name, new_commits_analyzed, commits_analyzed)
             logger.debug(f"Messages: {messages}")
         logger.info("Logical coupling tool finished")
 

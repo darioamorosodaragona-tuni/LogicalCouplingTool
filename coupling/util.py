@@ -7,6 +7,7 @@ from git import Repo
 # Define base paths
 DATA_PATH = '/app/.data'
 TEMP_PATH = '/app/.tmp'
+ROOT = '/app/'
 
 def is_remote_git_repo(repo_path):
     # Check if it's a URL
@@ -71,20 +72,23 @@ def setup_logging(route_name):
     # Check if the logger already has handlers
 
     if not logger.hasHandlers():
-        os.makedirs(route_name, exist_ok=True)
+        path = os.path.join(ROOT, route_name)
+        os.makedirs(path, exist_ok=True)
+        print(f"Saving log files in {path}")
+
         logger.setLevel(logging.DEBUG)
 
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-        error_handler = TimedRotatingFileHandler(f'{route_name}/error.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        error_handler = TimedRotatingFileHandler(f'{path}/error.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
         error_handler.setLevel(logging.ERROR)
         error_handler.setFormatter(formatter)
 
-        log_handler = TimedRotatingFileHandler(f'{route_name}/log.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        log_handler = TimedRotatingFileHandler(f'{path}/log.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
         log_handler.setLevel(logging.INFO)
         log_handler.setFormatter(formatter)
 
-        debug_handler = TimedRotatingFileHandler(f'{route_name}/debug.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        debug_handler = TimedRotatingFileHandler(f'{path}/debug.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
         debug_handler.setLevel(logging.DEBUG)
         debug_handler.setFormatter(formatter)
 
