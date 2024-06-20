@@ -9,60 +9,51 @@ The Logical Coupling Tool is designed to analyze commits in a software repositor
 - **Alerting**: Generate alerts for changes in logical couplings.
 - **Integration**: Integrates with Git repositories for seamless analysis.
 
-## Installation
 
-To install the Logical Coupling Tool, follow these steps:
+#### Project Structure
 
-1. Clone the repository:
+```
+project_root
+|_ coupling
+   |_ __init__.py
+   |_ main.py
+   |_ my_celery.py
+   |_ logical_coupling.py
+   |_ developer_coupling.py
+   |_ util.py
+|_ docker-compose.yml
+|_ Dockerfile
+|_ nginx.conf
+|_ requirements.txt
+|_ Jenkinsfile
+```
 
-   ```bash
-   git clone https://github.com/your_username/logical-coupling-tool.git
+### Building and Running the Project
+
+#### Prerequisites
+
+- Docker
+- Docker Compose
+
+#### Steps
+
+1. **Clone the repository:**
+
+   ```sh
+   git clone <repository_url>
+   cd project_root
    ```
 
-2. Navigate to the project directory:
+2. **Build and run the Docker containers:**
 
-   ```bash
-   cd logical-coupling-tool
+   ```sh
+   docker-compose up --build
    ```
 
-3. Install the dependencies:
+   This command will build the Docker images and start the containers for the Flask application, Redis, and Nginx.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
 
-## Usage
-
-### Using the Flask App
-
-The Logical Coupling Tool can be deployed as a Flask web application. To use the Flask app, follow these steps:
-
-1. Ensure you have Flask installed:
-
-   ```bash
-   pip install flask
-   ```
-
-2. Run the Flask app:
-
-   ```bash
-   python app.py
-   ```
-
-3. Access the following endpoints:
-
-   - **Logical Coupling Analysis**: `http://localhost:5001/logical-coupling`
-   - **Developer Coupling Analysis**: `http://localhost:5001/developer-coupling`
-
-#### Endpoint Parameters
-
-The endpoints accept the following parameters:
-
-- `git_url`: URL of the Git repository.
-- `branch`: Branch name to analyze.
-- `commits`: List of commit hashes to analyze (comma-separated).
-
-#### Jenkins Pipeline Integration
+### Jenkins Pipeline Integration
 
 The Logical Coupling Tool can be seamlessly integrated into a Jenkins pipeline to automate the analysis of logical and developer coupling in your software projects. The provided Jenkinsfile demonstrates how to incorporate the tool into your CI/CD workflow. Here's how it works:
 
@@ -79,6 +70,101 @@ The Logical Coupling Tool can be seamlessly integrated into a Jenkins pipeline t
 6. **Notifications**: If a webhook URL is provided, the pipeline script sends notifications to a Teams channel using the Office 365 Connector plugin. These notifications include information about the exit codes and messages from each stage, allowing team members to stay informed about the analysis results.
 
 This Jenkins pipeline provides a robust and automated way to integrate the Logical Coupling Tool into your CI/CD process, enabling you to continuously monitor and improve the quality of your software projects.
+
+#### Teams Notification: Webhook URL
+
+To send notifications to a Teams channel, you need to obtain a webhook URL for the channel. Here's how you can get the webhook URL: https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=newteams%2Cdotnet.
+Save the webhook URL, you will need it in the next step.
+
+#### Configuring the Jenkins File
+
+To configure the Jenkins file, follow these steps:
+
+1. **Update the Jenkinsfile with the following variables:**
+
+   ```groovy
+   environment {
+       # Update the following variables with appropriate values
+       FLASK_APP_URL = 'http://localhost:8000'
+       WEBHOOK_URL = "WEBHOOK_URL_OF_THE_TEAMS_CHANNEL_TO_SEND_NOTIFICATIONS"
+   }
+   ```
+   
+Use the webhook URL obtained in the previous step to replace `WEBHOOK_URL_OF_THE_TEAMS_CHANNEL_TO_SEND_NOTIFICATIONS`.
+Set the `FLASK_APP_URL` to the URL of the logical_coupling tool. Remember that the tool is running on port 8000.
+
+2**Configure Jenkins Pipeline:**
+
+   - Go to Jenkins Dashboard
+   - Create a new Pipeline job
+   - In the Pipeline configuration, point to your repository and specify the Jenkinsfile path
+
+3**Configure the Jenkinsfile stages:**
+
+   Ensure the `executeCouplingStage` function correctly sends requests to your Flask application and handles the responses. The function should look like this:
+
+   ```groovy
+   def executeCouplingStage(couplingType) {
+       def repoUrl = env.GIT_URL
+       def commitHash = env.GIT_COMMIT
+       def branchName = 'main'  // You can customize this if needed
+
+       echo "Repository URL: ${repoUrl}"
+       echo "Commit Hash: ${commitHash}"
+       echo "Branch Name: ${branchName}"
+
+       def response
+       try {
+           response = sh(script: """
+               curl -G -d 'git_url=${repoUrl}' -d 'commits=${commitHash}' -d 'branch=${branchName}' ${FLASK_APP_URL}/${couplingType}
+           """, returnStdout: true).trim()
+       } catch (Exception e) {
+           return [exitCode: 500, message: 'Server did not respond']
+       }
+
+       if (response == null) {
+           return [exitCode: 500, message:'Server response is null']
+       }
+
+       echo "Raw Response from Flask App: ${response}"
+
+       def jsonResponse = readJSON text: response
+       def exitCode = jsonResponse.exit_code
+       def message = jsonResponse.message
+
+       echo "Exit Code: ${exitCode}"
+       echo "Message: ${message}"
+
+       return [exitCode: exitCode, message: message]
+   }
+   ```
+
+4. **Set up the Jenkins job:**
+
+   - Create a new job in Jenkins.
+   - Choose "Pipeline" and configure it to use your repository and Jenkinsfile.
+
+5**Run the Jenkins job:**
+
+   Trigger the Jenkins job to build and deploy the application.
+
+
+
+### Using the Logical Coupling Tool   
+
+Access the following endpoints:
+
+   - **Logical Coupling Analysis**: `http://localhost:8000/logical-coupling`
+   - **Developer Coupling Analysis**: `http://localhost:8000/developer-coupling`
+
+#### Endpoint Parameters
+
+The endpoints accept the following parameters:
+
+- `git_url`: URL of the Git repository.
+- `branch`: Branch name to analyze.
+- `commits`: List of commit hashes to analyze (comma-separated).
+
 
 
 ### Using the Tool Locally
@@ -140,6 +226,14 @@ In this example:
 - `docs/*`: Ignores all components under the "docs" directory.
 - `config.yaml`: Ignores the specific file named "config.yaml".
 - `*.py`: Ignores all Python files.
+
+### Notes
+
+- Ensure that the `FLASK_APP_URL` and `WEBHOOK_URL` environment variables are correctly set to point to your Flask application and Teams webhook URL, respectively.
+- The `docker-compose.yml` is set to expose the application on port `8000` through Nginx. Adjust the port as needed.
+- The log files and data directories are mapped to Docker volumes to persist data.
+
+This should provide you with a working setup for building, running, and managing your project using Docker and Jenkins.
 
 ## Contributing
 

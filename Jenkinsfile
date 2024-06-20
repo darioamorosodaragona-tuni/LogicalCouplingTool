@@ -2,12 +2,14 @@ pipeline {
     agent any
 
     environment {
+        //TODO: Update the values of the following variables
         FLASK_APP_URL = 'URL OF THE APP'
+        WEBHOOK_URL = "WEBHOOK_URL OF THE TEAMS CHANNEL TO SEND NOTIFICATIONS"
+
         LOGICAL_EXIT_CODE = -100
         LOGICAL_MESSAGE = 'UNEXECUTED'
         DEVELOPER_EXIT_CODE = -100
         DEVELOPER_MESSAGE = 'UNEXECUTED'
-        WEBHOOK_URL = "WEBHOOK_URL OF THE TEAMS CHANNEL TO SEND NOTIFICATIONS"
     }
 
     stages {

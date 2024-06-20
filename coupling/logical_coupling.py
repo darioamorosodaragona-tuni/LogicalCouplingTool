@@ -349,11 +349,17 @@ def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed)
     file = f'/app/.data/{repo_name}/LogicalCoupling.history'
     file = os.path.relpath(file, os.getcwd())
 
-    for index,row in detailed_data.iterrows():
+    if 'SUMMED_LC_VALUE' not in detailed_data.columns:
+        detailed_data['SUMMED_LC_VALUE'] = 0
+
+    for index, row in detailed_data.iterrows():
         comp1 = row["COMPONENT 1"]
         comp2 = row["COMPONENT 2"]
         lc_value = data[(data["COMPONENT 1"] == comp1) & (data["COMPONENT 2"] == comp2)]["LC_VALUE"]
-        row["SUMMED_LC_VALUE"] = lc_value
+        logger.debug(f"LC Value: {lc_value}")
+        if not lc_value.empty:
+            detailed_data.at[index, "SUMMED_LC_VALUE"] = lc_value.values[0]
+        logger.debug(f"Summed LC Value: {detailed_data.at[index, 'SUMMED_LC_VALUE']}")
 
     detailed_data.to_csv(file, index=False, mode='a', header=False)
 

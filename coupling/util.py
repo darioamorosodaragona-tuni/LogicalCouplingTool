@@ -74,7 +74,6 @@ def setup_logging(route_name):
     if not logger.hasHandlers():
         path = os.path.join(ROOT, route_name)
         os.makedirs(path, exist_ok=True)
-        print(f"Saving log files in {path}")
 
         logger.setLevel(logging.DEBUG)
 
@@ -100,5 +99,7 @@ def setup_logging(route_name):
         logger.addHandler(log_handler)
         logger.addHandler(debug_handler)
         logger.addHandler(console_handler)
+
+        logger.debug(f"Logging initialized for {route_name} in {path}")
 
     return logger
