@@ -93,13 +93,13 @@ To configure the Jenkins file, follow these steps:
 Use the webhook URL obtained in the previous step to replace `WEBHOOK_URL_OF_THE_TEAMS_CHANNEL_TO_SEND_NOTIFICATIONS`.
 Set the `FLASK_APP_URL` to the URL of the logical_coupling tool. Remember that the tool is running on port 8000.
 
-2**Configure Jenkins Pipeline:**
+2. **Configure Jenkins Pipeline:**
 
    - Go to Jenkins Dashboard
    - Create a new Pipeline job
    - In the Pipeline configuration, point to your repository and specify the Jenkinsfile path
 
-3**Configure the Jenkinsfile stages:**
+3. **Configure the Jenkinsfile stages:**
 
    Ensure the `executeCouplingStage` function correctly sends requests to your Flask application and handles the responses. The function should look like this:
 
@@ -144,7 +144,7 @@ Set the `FLASK_APP_URL` to the URL of the logical_coupling tool. Remember that t
    - Create a new job in Jenkins.
    - Choose "Pipeline" and configure it to use your repository and Jenkinsfile.
 
-5**Run the Jenkins job:**
+5. **Run the Jenkins job:**
 
    Trigger the Jenkins job to build and deploy the application.
 
