@@ -23,11 +23,11 @@ def is_remote_git_repo(repo_path):
     raise ValueError("Invalid Git repository path: {}".format(repo_path))
 
 def clone(repo_url):
-    path = os.path.join(TEMP_PATH, repo_url.replace('/', '_').replace('https://', ''))
+    path = os.path.join(TEMP_PATH, repo_url.replace('https://', '').replace('/', '_'))
     if not os.path.exists(path):
         if is_remote_git_repo(repo_url):
-            print(os.path.relpath(path, os.getcwd()))
-            print(os.path.abspath(path))
+            logging.debug(f"relative path to cloning: {os.path.relpath(path, os.getcwd())}")
+            logging.debug(f"absolute path to cloning: {os.path.abspath(path)}")
             Repo.clone_from(repo_url, path)
             return path
         else:
