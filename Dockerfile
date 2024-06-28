@@ -19,6 +19,10 @@ RUN pip install --upgrade pip && \
 # Copy the rest of the application code into the container at /app
 COPY . .
 
+# Copy the git confuguration file
+COPY /etc/gitconfig /etc/gitconfig
+COPY /etc/.git-credentials /etc/.git-credentials
+
 # Copy the Nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
 
