@@ -1,5 +1,6 @@
 import logging
 import os
+import urllib
 from logging.handlers import TimedRotatingFileHandler
 from urllib.parse import urlparse
 from git import Repo
@@ -28,7 +29,11 @@ def clone(repo_url):
         if is_remote_git_repo(repo_url):
             logging.debug(f"relative path to cloning: {os.path.relpath(path, os.getcwd())}")
             logging.debug(f"absolute path to cloning: {os.path.abspath(path)}")
-            Repo.clone_from(repo_url, path)
+            logging.info(f"Cloning repo: {repo_url}")
+            logging.debug(f"Received repo URL: {repo_url}")
+            encoded_repo_url = urllib.parse.quote(repo_url, safe=':/')
+            logging.debug(f"Encoded repo URL: {encoded_repo_url}")
+            Repo.clone_from(encoded_repo_url, path)
             return path
         else:
             return repo_url
