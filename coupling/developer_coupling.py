@@ -140,7 +140,7 @@ def run(repo_url, branch, commit_hash):
         path_to_data = f'/app/.data/{repo_name}/developer_coupling'
         path_to_data = os.path.relpath(path_to_data, f'{os.getcwd()}')
 
-        path_to_cloned_repo = clone(repo_url)
+        path_to_cloned_repo = clone(repo_url, logger)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
 

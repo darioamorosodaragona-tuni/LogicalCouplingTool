@@ -394,7 +394,7 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
 
         logger.debug(f"Repo name: {repo_name}")
 
-        path_to_cloned_repo = util.clone(repo_url)
+        path_to_cloned_repo = util.clone(repo_url, logger)
 
         logger.info(f"Cloned repo: {path_to_cloned_repo}")
 

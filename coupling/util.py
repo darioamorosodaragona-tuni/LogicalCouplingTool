@@ -23,16 +23,16 @@ def is_remote_git_repo(repo_path):
     # Not a valid remote URL or local path
     raise ValueError("Invalid Git repository path: {}".format(repo_path))
 
-def clone(repo_url):
+def clone(repo_url, logger):
     path = os.path.join(TEMP_PATH, repo_url.replace('https://', '').replace('/', '_'))
     if not os.path.exists(path):
         if is_remote_git_repo(repo_url):
-            logging.debug(f"relative path to cloning: {os.path.relpath(path, os.getcwd())}")
-            logging.debug(f"absolute path to cloning: {os.path.abspath(path)}")
-            logging.info(f"Cloning repo: {repo_url}")
-            logging.debug(f"Received repo URL: {repo_url}")
-            encoded_repo_url = urllib.parse.quote(repo_url, safe=':/')
-            logging.debug(f"Encoded repo URL: {encoded_repo_url}")
+            logger.debug(f"relative path to cloning: {os.path.relpath(path, os.getcwd())}")
+            logger.debug(f"absolute path to cloning: {os.path.abspath(path)}")
+            logger.info(f"Cloning repo: {repo_url}")
+            logger.debug(f"Received repo URL: {repo_url}")
+            encoded_repo_url = urllib.parse.quote(repo_url, safe=':@/')
+            logger.debug(f"Encoded repo URL: {encoded_repo_url}")
             Repo.clone_from(encoded_repo_url, path)
             return path
         else:
