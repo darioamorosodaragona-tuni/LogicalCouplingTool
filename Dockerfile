@@ -19,9 +19,11 @@ RUN pip install --upgrade pip && \
 # Copy the rest of the application code into the container at /app
 COPY . .
 
-# Copy the git confuguration file
-COPY /etc/gitconfig /etc/gitconfig
-COPY /etc/.git-credentials /etc/.git-credentials
+
+# Conditional copy of /etc/gitconfig and /etc/.git-credentials
+RUN if [ -f /etc/gitconfig ]; then cp /etc/gitconfig /etc/gitconfig; fi
+RUN if [ -f /etc/.git-credentials ]; then cp /etc/.git-credentials /etc/.git-credentials; fi
+
 
 # Copy the Nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
