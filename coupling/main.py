@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify
-from .logical_coupling import run as logical_coupling_run
+from .logical_coupling import run as logical_coupling_run, analyze_commits
 from .developer_coupling import run as developer_coupling_run
 from . import util
 from .my_celery import make_celery

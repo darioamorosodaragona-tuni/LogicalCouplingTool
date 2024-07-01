@@ -17,11 +17,8 @@
     <option name="removeUnused" value="true" />
     <option name="keepMatchingSpecifier" value="false" />
   </component>
-  <component name="PyNamespacePackagesService">
-    <option name="namespacePackageFolders">
-      <list>
-        <option value="$MODULE_DIR$/old/LogicalCouplingNoDb" />
-      </list>
-    </option>
+  <component name="PyDocumentationSettings">
+    <option name="format" value="NUMPY" />
+    <option name="myDocStringFormat" value="NumPy" />
   </component>
 </module>

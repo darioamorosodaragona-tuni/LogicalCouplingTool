@@ -11,25 +11,39 @@ import pandas as pd
 import pydriller
 import tqdm
 
+from main import celery
+from util import DATA_PATH
 # from .util import *
 from . import util
 
 logger = util.setup_logging('logical_coupling')
 
 
+
 def load_previous_results(repo_name, path_to_repo):
     """
     Load previous logical coupling results from CSV files.
 
-    Parameters:
-    - repo_name (str): Name of the repository.
-    - path_to_repo (str): Path to the local repository.
-    - branch (str): Branch name.
 
-    Returns:
-    - data (pd.DataFrame): DataFrame containing previous logical coupling data.
-    - component_to_ignore (list): List of components to ignore.
-    - commits_analyzed_dataframe (pd.DataFrame): DataFrame containing previously analyzed commits.
+    Parameters
+    ----------
+    repo_name : str
+        Name of the repository.
+    path_to_repo : str
+        Path to the local repository.
+
+    Returns
+    -------
+    tuple: (pd.DataFrame, list, pd.DataFrame)
+        data : pd.DataFrame
+            DataFrame containing previous logical coupling data.
+
+        component_to_ignore : list
+            List of components to ignore.
+
+        commits_analyzed_dataframe : pd.DataFrame
+            DataFrame containing previously analyzed commits.
+
     """
 
     commits_analyzed = f'/app/.data/{repo_name}/analyzed.csv'
@@ -81,61 +95,77 @@ def load_previous_results(repo_name, path_to_repo):
     return data, component_to_ignore, commits_analyzed_dataframe
 
 
-def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore):
+def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_ignore, repo_name):
     """
-        Analyze commits for logical coupling.
+       Analyze commits for logical coupling.
 
-        Parameters:
-        - path_to_repo (str): Path to the local repository.
-        - branch (str): Branch name.
-        - commits (list): List of commit hashes to analyze.
-        - last_commit_analyzed (str): Last commit already analyzed.
-        - to_ignore (list): List of components to ignore.
+       Parameters
+       ----------
+       path_to_repo : str
+           Path to the local repository.
+       branch : str
+           Branch name.
+       commits : list
+           List of commit hashes to analyze.
+       last_commit_analyzed : str
+           Last commit already analyzed.
+       to_ignore : list
+           List of components to ignore.
 
-        Returns:
-        - grouped_df (pd.DataFrame): Grouped DataFrame with logical coupling results.
-        - commits_analyzed (list): List of commits analyzed during the process.
-        """
+       Returns
+       -------
+       tuple: (bool, pd.DataFrame, pd.DataFrame, list)
+            first_analysis : bool
+                True if this is the first analysis, False otherwise
+
+            result : pd.DataFrame
+                DataFrame containing detailed logical coupling results
+
+            grouped_df : pd.DataFrame
+                Grouped DataFrame with logical coupling results
+
+            commits_analyzed : list
+                List of commits analyzed during the process
+
+       """
+
     rows = []
     commits_analyzed = []
+    first_analysis = False
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
 
     if last_commit_analyzed is None:
+        logger.info("No previous commits analyzed. Launching background task for full analysis.")
+        # Launch background task for historical analysis
+        analyze_commits_background.delay(path_to_repo, branch, commits, to_ignore, repo_name)
+        first_analysis = True
+        return first_analysis, pd.DataFrame(), pd.DataFrame(), commits_analyzed
 
-        logger.info("No previous commits analyzed")
-        logger.debug(f"Analyzing commits {commits} on branch {branch}")
-        repository = pydriller.Repository(path_to_repo, to_commit=commits[-1],
-                                          only_in_branch=branch)
+    if last_commit_analyzed in commits:
+        logger.debug(f"Last commit analyzed {last_commit_analyzed} is in commits {commits}")
+        commits.remove(last_commit_analyzed)
+        logger.debug(f"Commits to analyze: {commits}")
 
-    else:
-        if last_commit_analyzed in commits:
-            logger.debug(f"Last commit analyzed {last_commit_analyzed} is in commits {commits}")
-            commits.remove(last_commit_analyzed)
-            # commits = commits[commits.index(last_commit_analyzed) + 1:]
-            logger.debug(f"Commits to analyze: {commits}")
+    repo = git.Repo(path_to_repo)
+    logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
+    logger.debug(f"Analyzing commits {commits} on branch {branch}")
 
-        repo = git.Repo(path_to_repo)
-        logger.info(f"Previous commits analyzed: {last_commit_analyzed}")
-        logger.debug(f"Analyzing commits {commits} on branch {branch}")
-        if len(commits)<1:
-            logger.info("No new commits to analyze")
-            return pd.DataFrame(), pd.DataFrame(), commits_analyzed
-        commits_to_analyze = repo.git.execute(['git', 'rev-list', '--ancestry-path',
-                                               '%s..%s' % (last_commit_analyzed, commits[0])]).split()
-        logger.debug(f"Commits to analyze: {commits_to_analyze}")
-        logger.info(f"Analyzing {len(commits_to_analyze)} commits on branch {branch}")
-        repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze,
-                                          only_in_branch=branch)
+    if len(commits) < 1:
+        logger.info("No new commits to analyze")
+        return first_analysis, pd.DataFrame(), pd.DataFrame(), commits_analyzed
+
+    commits_to_analyze = repo.git.execute(
+        ['git', 'rev-list', '--ancestry-path', f'{last_commit_analyzed}..{commits[0]}']).split()
+    logger.debug(f"Commits to analyze: {commits_to_analyze}")
+    logger.info(f"Analyzing {len(commits_to_analyze)} commits on branch {branch}")
+
+    repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze, only_in_branch=branch)
 
     total_modified_files = 0
     for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
                             leave=True):
         result = []
-
-        # if commit.hash == last_commit_analyzed:
-        #     logger.debug(f"Commit {commit.hash} already analyzed")
-        #     continue
 
         modified_files = commit.modified_files
         total_modified_files += len(modified_files)
@@ -149,10 +179,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             else:
                 logger.debug(f"Ignored file: {files.new_path}")
 
-        # components = [root_calculator(file_path) for file_path in result]
-        components = []
-        for file_path in result:
-            components.append(util.root_calculator(file_path))
+        components = [util.root_calculator(file_path) for file_path in result]
         logger.debug(f"Components: {components}")
 
         components.sort()
@@ -183,55 +210,96 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
     if result.empty:
         logger.info("No new coupling found")
-        return result, result, commits_analyzed
+        return first_analysis, result, result, commits_analyzed
 
     grouped_df = result.drop(columns=["DATE", 'TIMEZONE'], inplace=False).groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
         'LC_VALUE': 'sum',
         'COMMIT': lambda x: list(x)
     }).reset_index()
 
-    # Rename the 'LC_VALUE' column to the original name
-    # grouped_df = grouped_df.rename(columns={'LC_VALUE': 'LC_VALUE'})
-    return result, grouped_df, commits_analyzed
+    return first_analysis, result, grouped_df, commits_analyzed
+
+
+# Celery task for background analysis
+
+
+
+@celery.task
+def analyze_commits_background(path_to_repo, branch, commits, to_ignore, repo_name):
+    initial_analysis_flag = os.path.join(path_to_repo, 'initial_analysis_done.flag')
+    # Perform full analysis if the initial flag is not present
+    if not os.path.exists(initial_analysis_flag):
+        with open(initial_analysis_flag, 'w') as f:
+            f.write('Initial analysis started')
+        logger.info("No previous commits analyzed. Performing full analysis.")
+        first_analysis, detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_repo, branch,
+                                                                                           commits, None, to_ignore)
+
+
+        # Since it's the first analysis, there's no previous data to merge
+        # We can directly save the detailed results and new data
+        save(detailed_results, new_data, repo_name, new_commits_analyzed, pd.DataFrame())
+
+        with open(initial_analysis_flag, 'w') as f:
+            f.write('Initial analysis completed')
+
 
 
 def convertToNumber(s):
     """
-       Convert a string to a unique numeric value.
+    Convert a string to a unique numeric value.
 
-       Parameters:
-       - s (str): Input string.
+    Parameters
+    ----------
+    s   : str
+        Input string.
 
-       Returns:
-       - int: Numeric representation of the input string.
-       """
+    Returns
+    -------
+    int
+        Numeric representation of the input string.
+
+    """
     return int.from_bytes(s.encode(), 'little')
 
 
 def convertFromNumber(n):
     """
-       Convert a numeric value back to its original string representation.
+    Convert a numeric value back to its original string representation.
 
-       Parameters:
-       - n (int): Numeric value.
+    Parameters
+    ----------
+    n   : int
+        Numeric value.
 
-       Returns:
-       - str: Original string representation.
-       """
+    Returns
+    -------
+    str
+        Original string representation.
+
+    """
+
     return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
 
 
 def update_data(data, new_data):
     """
-        Update the logical coupling data with new analysis results.
+    Update the logical coupling data with new analysis results.
 
-        Parameters:
-        - data (pd.DataFrame): Existing logical coupling data.
-        - new_data (pd.DataFrame): New logical coupling data to be merged.
 
-        Returns:
-        - merged_df (pd.DataFrame): Merged DataFrame containing updated logical coupling data.
-        """
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Existing logical coupling data
+    new_data : pd.DataFrame
+        New logical coupling data to be merged
+
+    Returns
+    -------
+    pd.DataFrame
+        Merged DataFrame containing updated logical coupling data
+
+    """
 
     merged_df = pd.merge(data, new_data, on=['COMPONENT 1', 'COMPONENT 2'], how='outer')
     merged_df['LC_VALUE'] = merged_df['LC_VALUE_x'].fillna(0) + merged_df['LC_VALUE_y'].fillna(0)
@@ -245,15 +313,22 @@ def update_data(data, new_data):
 
 def alert(data_extracted, previous_data):
     """
-       Identify and alert about changes in logical coupling.
+    Identify and alert about changes in logical coupling.
 
-       Parameters:
-       - data_extracted (pd.DataFrame): Newly extracted logical coupling data.
-       - previous_data (pd.DataFrame): Previous logical coupling data.
+    Parameters
+    ----------
+    data_extracted : pd.DataFrame
+        Newly extracted logical coupling data
+    previous_data : pd.DataFrame
+        Previous logical coupling data
 
-       Returns:
-       - alert_df (pd.DataFrame): DataFrame containing alert information.
-       """
+    Returns
+    -------
+    pd.DataFrame
+        containing alert information
+
+    """
+
     new_rows = []
     to_alert = pd.merge(previous_data, data_extracted[['COMPONENT 1', 'COMPONENT 2', 'COMMIT', 'LC_VALUE']],
                         on=['COMPONENT 1', 'COMPONENT 2'], how='inner')
@@ -301,14 +376,20 @@ def alert(data_extracted, previous_data):
 
 def alert_messages(increasing_data):
     """
-       Generate alert messages based on changes in logical coupling.
+    Generate alert messages based on changes in logical coupling.
 
-       Parameters:
-       - increasing_data (pd.DataFrame): DataFrame containing increased logical coupling information.
+    Parameters
+    ----------
+    increasing_data : pd.DataFrame
+        containing increased logical coupling information
 
-       Returns:
-       - str: Generated alert messages.
-       """
+    Returns
+    -------
+    str
+        Generated alert messages.
+
+    """
+
     message = ""
     commit = ""
     for index, row in increasing_data.iterrows():
@@ -331,17 +412,24 @@ def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed)
     """
        Save logical coupling data and analyzed commits to CSV files.
 
-       Parameters:
-       - data (pd.DataFrame): Logical coupling data to be saved.
-       - repo_name (str): Name of the repository.
-       - new_commits_analyzed (list): Newly analyzed commits.
-       - commits_analyzed (pd.DataFrame): Previously analyzed commits.
+       Parameters
+       -----------
+       data : pd.DataFrame
+            Logical coupling data to be saved.
+       repo_name : str
+            Name of the repository.
+       new_commits_analyzed : list
+            Newly analyzed commits.
+       commits_analyzed : pd.DataFrame
+            Previously analyzed commits.
        """
+
     file = f'/app/.data/{repo_name}/LogicalCoupling.csv'
     file = os.path.relpath(file, os.getcwd())
     data.to_csv(file, index=False)
     file_commits = f'/app/.data/{repo_name}/analyzed.csv'
     file_commits = os.path.relpath(file_commits, os.getcwd())
+
     new_commits_analyzed = pd.DataFrame({'COMMITS ANALYZED': new_commits_analyzed})
     commits_analyzed = pd.concat([commits_analyzed, new_commits_analyzed])
     commits_analyzed.to_csv(file_commits, index=False)
@@ -349,34 +437,59 @@ def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed)
     file = f'/app/.data/{repo_name}/LogicalCoupling.history'
     file = os.path.relpath(file, os.getcwd())
 
-    if 'SUMMED_LC_VALUE' not in detailed_data.columns:
-        detailed_data['SUMMED_LC_VALUE'] = 0
+    # if 'SUMMED_LC_VALUE' not in detailed_data.columns:
+    #     detailed_data['SUMMED_LC_VALUE'] = 0
 
-    for index, row in detailed_data.iterrows():
-        comp1 = row["COMPONENT 1"]
-        comp2 = row["COMPONENT 2"]
-        lc_value = data[(data["COMPONENT 1"] == comp1) & (data["COMPONENT 2"] == comp2)]["LC_VALUE"]
-        logger.debug(f"LC Value: {lc_value}")
-        if not lc_value.empty:
-            detailed_data.at[index, "SUMMED_LC_VALUE"] = lc_value.values[0]
-        logger.debug(f"Summed LC Value: {detailed_data.at[index, 'SUMMED_LC_VALUE']}")
+    # for index, row in detailed_data.iterrows():
+    #     comp1 = row["COMPONENT 1"]
+    #     comp2 = row["COMPONENT 2"]
+    #     lc_value = data[(data["COMPONENT 1"] == comp1) & (data["COMPONENT 2"] == comp2)]["LC_VALUE"]
+    #     logger.debug(f"LC Value: {lc_value}")
+    #     if not lc_value.empty:
+    #         detailed_data.at[index, "SUMMED_LC_VALUE"] = lc_value.values[0]
+    #     logger.debug(f"Summed LC Value: {detailed_data.at[index, 'SUMMED_LC_VALUE']}")
+
+    # Unisci detailed_data con data sui componenti 1 e 2 per aggiungere i valori LC
+    merged_data = detailed_data.merge(data[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE']],
+                                      on=['COMPONENT 1', 'COMPONENT 2'],
+                                      how='left',
+                                      suffixes=('', '_SUMMED'))
+
+    # Assegna i valori LC sommati al DataFrame originale detailed_data
+    detailed_data['SUMMED_LC_VALUE'] = merged_data['LC_VALUE_SUMMED']
+
+    # Se ci sono casi in cui LC_VALUE è mancante, puoi riempirli con un valore predefinito (ad es. 0)
+    detailed_data['SUMMED_LC_VALUE'].fillna(0, inplace=True)
+
+    # Debugging se necessario
+    logger.debug(f"Merged Data:\n{merged_data[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE', 'SUMMED_LC_VALUE']]}")
 
     detailed_data.to_csv(file, index=False, mode='a', header=False)
 
+
 def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
     """
-      Execute the logical coupling tool on a specific repository, branch, and commit.
+        Execute the logical coupling tool on a specific repository, branch, and commit.
 
-      Parameters:
-      - repo_url (str): URL of the repository.
-      - branch (str): Branch name.
-      - commit_hash (str): Commit hash to analyze.
+        Parameters
+        ----------
+        repo_url : str
+            URL of the repository.
+        branch : str
+            Branch name.
+        commit_hash : str
+            Commit hash to analyze.
 
-      Returns:
-      - exit_code (int): Exit code indicating coupling detected (1) or no coupling detected (0).
-      - messages (str): Messages indicating coupling detected or empty string if no coupling detected.
-      - commits (list): commits in which coupling was detected.
-      """
+        Returns
+        -------
+        exit_code : int
+            Exit code indicating coupling detected (1), no coupling detected (0),
+            first analysis (-2), error (-1).
+        messages : str
+            Messages indicating coupling detected or empty string if no coupling detected.
+        commits : list
+            Commits in which coupling was detected.
+        """
     global logger
     logger = util.setup_logging('logical_coupling')
 
@@ -420,13 +533,18 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
             elif last_commit_analyzed:
                 last_commit = last_commit_analyzed
 
-        detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch, commit_hash, last_commit,
-                                                         components_to_ignore)
-
-        if new_data.empty:
+        first_analysis, detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch,
+                                                                                           commit_hash,
+                                                                                           last_commit,
+                                                                                           components_to_ignore, repo_name)
+        if first_analysis:
+            logger.info("First analysis launched")
+            exit_code = -2
+            messages = ("First analysis launched, waiting for background task to complete, you will see the results in "
+                        "the next analysis")
+        elif new_data.empty:
             logger.info("No new coupling found ")
-            messages = ""
-            commits = []
+            messages = "No new coupling found"
         else:
             logger.info("New coupling found ")
             exit_code = 1
@@ -434,7 +552,7 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
             alert_data = alert(new_data, data)
             logger.debug(f"Alert data: {alert_data}")
             messages = alert_messages(alert_data)
-            commits = new_data['COMMIT']
+            # commits = new_data['COMMIT']
             new_data.drop('COMMIT', axis=1, inplace=True)
             logger.debug(f"New Data: {new_data}")
             merged_data = update_data(data, new_data)
@@ -450,6 +568,6 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
         logger.info("Logical coupling tool finished with error")
         return -1, "Error in logical coupling tool", []
 
-    finally:
-        logger.debug("Deleting temporary files")
-        # shutil.rmtree('.temp/', ignore_errors=True)
+    # finally:
+    #     # logger.debug("Deleting temporary files")
+    #     # shutil.rmtree('.temp/', ignore_errors=True)
