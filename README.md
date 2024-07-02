@@ -47,10 +47,10 @@ project_root
 2. **Build and run the Docker containers:**
 
    ```sh
-   docker-compose up --build
+   setup.sh
    ```
 
-   This command will build the Docker images and start the containers for the Flask application, Redis, and Nginx.
+   This command will perform some necessary action and will build the Docker images and start the containers for the Flask application, Redis, and Nginx.
 
 
 ### Jenkins Pipeline Integration
