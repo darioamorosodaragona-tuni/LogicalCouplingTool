@@ -4,20 +4,16 @@ import math
 import os
 import shutil
 import traceback
-
 import git
 import pandas
 import pandas as pd
 import pydriller
 import tqdm
-
-from main import celery
-from util import DATA_PATH
-# from .util import *
+from . import celery
 from . import util
 
-logger = util.setup_logging('logical_coupling')
 
+logger = util.setup_logging('logical_coupling')
 
 
 def load_previous_results(repo_name, path_to_repo):
@@ -126,21 +122,28 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
             commits_analyzed : list
                 List of commits analyzed during the process
+            task_id : str
+                Task ID of the celery background analysis task if first analysis, None otherwise
 
        """
 
-    rows = []
-    commits_analyzed = []
+
+
     first_analysis = False
+    task_id = None
 
     logger.info(f"Analyzing commits {commits} on branch {branch}")
 
     if last_commit_analyzed is None:
         logger.info("No previous commits analyzed. Launching background task for full analysis.")
+        # logger.debug(f"i'm here: {os.getcwd()}")
+        # logger.debug("the repo folder exists? : " + str(os.path.exists(path_to_repo)))
+
         # Launch background task for historical analysis
-        analyze_commits_background.delay(path_to_repo, branch, commits, to_ignore, repo_name)
+        result = _analyze_commits_background.delay(path_to_repo, branch, commits, to_ignore, repo_name)
         first_analysis = True
-        return first_analysis, pd.DataFrame(), pd.DataFrame(), commits_analyzed
+        task_id = result.id
+        return first_analysis, pd.DataFrame(), pd.DataFrame(), [], task_id
 
     if last_commit_analyzed in commits:
         logger.debug(f"Last commit analyzed {last_commit_analyzed} is in commits {commits}")
@@ -153,7 +156,7 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
 
     if len(commits) < 1:
         logger.info("No new commits to analyze")
-        return first_analysis, pd.DataFrame(), pd.DataFrame(), commits_analyzed
+        return first_analysis, pd.DataFrame(), pd.DataFrame(), [], task_id
 
     commits_to_analyze = repo.git.execute(
         ['git', 'rev-list', '--ancestry-path', f'{last_commit_analyzed}..{commits[0]}']).split()
@@ -161,8 +164,35 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
     logger.info(f"Analyzing {len(commits_to_analyze)} commits on branch {branch}")
 
     repository = pydriller.Repository(path_to_repo, only_commits=commits_to_analyze, only_in_branch=branch)
+    result, grouped_df, commits_analyzed = _calculate_lc(branch, repository, to_ignore)
+    return first_analysis, result, grouped_df, commits_analyzed, task_id
 
+
+def _calculate_lc(branch, repository, to_ignore):
+    """
+
+    Parameters
+    ----------
+    branch : str
+        Branch name
+    repository : pydriller.Repository
+        Repository object
+    to_ignore
+        List of components to ignore
+
+    Returns
+    -------
+    pd.DataFrame
+        Detailed logical coupling results
+    pd.DataFrame
+        Grouped logical coupling results
+    list
+        Commits analyzed during the process
+
+    """
     total_modified_files = 0
+    commits_analyzed = []
+    rows = []
     for commit in tqdm.tqdm(repository.traverse_commits(), desc="Analyzing commits", unit="commit", position=0,
                             leave=True):
         result = []
@@ -203,46 +233,49 @@ def analyze_commits(path_to_repo, branch, commits, last_commit_analyzed, to_igno
             logger.debug("No new coupling found in commit " + commit.hash)
 
         commits_analyzed.append(commit.hash)
-
     logger.info(f"Analyzed {total_modified_files} modified files on branch {branch}")
-
     result = pd.DataFrame(rows)
-
     if result.empty:
         logger.info("No new coupling found")
-        return first_analysis, result, result, commits_analyzed
-
+        return result, result, commits_analyzed
     grouped_df = result.drop(columns=["DATE", 'TIMEZONE'], inplace=False).groupby(['COMPONENT 1', 'COMPONENT 2']).agg({
         'LC_VALUE': 'sum',
         'COMMIT': lambda x: list(x)
     }).reset_index()
-
-    return first_analysis, result, grouped_df, commits_analyzed
+    return result, grouped_df, commits_analyzed
 
 
 # Celery task for background analysis
 
 
-
 @celery.task
-def analyze_commits_background(path_to_repo, branch, commits, to_ignore, repo_name):
-    initial_analysis_flag = os.path.join(path_to_repo, 'initial_analysis_done.flag')
-    # Perform full analysis if the initial flag is not present
-    if not os.path.exists(initial_analysis_flag):
-        with open(initial_analysis_flag, 'w') as f:
-            f.write('Initial analysis started')
-        logger.info("No previous commits analyzed. Performing full analysis.")
-        first_analysis, detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_repo, branch,
-                                                                                           commits, None, to_ignore)
+def _analyze_commits_background(path_to_repo, branch, commits, to_ignore, repo_name):
+    try:
+        initial_analysis_flag = os.path.join(path_to_repo, 'initial_analysis_done.flag')
+        initial_analysis_flag = os.path.relpath(initial_analysis_flag, os.getcwd())
+        # logger.debug("the relative flag file path: " + initial_analysis_flag)
+        # logger.debug(f"i'm here: {os.getcwd()}")
+        # logger.debug("the repo folder exists? : " + str(os.path.exists(path_to_repo)))
+        # logger.debug("the flag file exists? : " + str(os.path.exists(initial_analysis_flag)))
+        # logger.debug("the relative flag file path: " + initial_analysis_flag)
+        if not os.path.exists(initial_analysis_flag):
+            with open(initial_analysis_flag, 'w') as f:
+                f.write('Initial analysis started')
+            logger.info("No previous commits analyzed. Performing full analysis.")
+            detailed_results, new_data, new_commits_analyzed = _calculate_lc(branch, pydriller.Repository(path_to_repo, to_commit=commits[-1]), to_ignore)
 
+            logger.debug(f"Detailed results: {detailed_results.head(10).to_string()}")
+            logger.debug(f"New data: {new_data.head(10).to_string()}")
 
-        # Since it's the first analysis, there's no previous data to merge
-        # We can directly save the detailed results and new data
-        save(detailed_results, new_data, repo_name, new_commits_analyzed, pd.DataFrame())
+            save(detailed_results, new_data, repo_name, new_commits_analyzed, pd.DataFrame())
 
-        with open(initial_analysis_flag, 'w') as f:
-            f.write('Initial analysis completed')
+            with open(initial_analysis_flag, 'w') as f:
+                f.write('Initial analysis completed')
 
+            return True
+    except:
+        logger.error(traceback.format_exc())
+        return False
 
 
 def convertToNumber(s):
@@ -414,6 +447,8 @@ def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed)
 
        Parameters
        -----------
+       detailed_data : pd.DataFrame
+            Detailed logical coupling data to be saved.
        data : pd.DataFrame
             Logical coupling data to be saved.
        repo_name : str
@@ -462,9 +497,10 @@ def save(detailed_data, data, repo_name, new_commits_analyzed, commits_analyzed)
     detailed_data['SUMMED_LC_VALUE'].fillna(0, inplace=True)
 
     # Debugging se necessario
-    logger.debug(f"Merged Data:\n{merged_data[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE', 'SUMMED_LC_VALUE']]}")
+    logger.debug(f"Merged Data:\n{merged_data[['COMPONENT 1', 'COMPONENT 2', 'LC_VALUE', 'LC_VALUE_SUMMED']]}")
 
     detailed_data.to_csv(file, index=False, mode='a', header=False)
+
 
 
 def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
@@ -473,6 +509,8 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
 
         Parameters
         ----------
+        last_commit_analyzed : str
+            Last commit already analyzed.
         repo_url : str
             URL of the repository.
         branch : str
@@ -533,15 +571,16 @@ def run(repo_url, branch, commit_hash, last_commit_analyzed=None):
             elif last_commit_analyzed:
                 last_commit = last_commit_analyzed
 
-        first_analysis, detailed_results, new_data, new_commits_analyzed = analyze_commits(path_to_cloned_repo, branch,
+        first_analysis, detailed_results, new_data, new_commits_analyzed, task_id = analyze_commits(path_to_cloned_repo, branch,
                                                                                            commit_hash,
                                                                                            last_commit,
-                                                                                           components_to_ignore, repo_name)
+                                                                                           components_to_ignore,
+                                                                                           repo_name)
         if first_analysis:
             logger.info("First analysis launched")
             exit_code = -2
             messages = ("First analysis launched, waiting for background task to complete, you will see the results in "
-                        "the next analysis")
+                        f"the next analysis. To see the progress of the analysis, use logical-coupling/background-task/{task_id} route")
         elif new_data.empty:
             logger.info("No new coupling found ")
             messages = "No new coupling found"

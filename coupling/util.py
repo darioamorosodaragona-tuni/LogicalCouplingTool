@@ -10,6 +10,7 @@ DATA_PATH = '/app/.data'
 TEMP_PATH = '/app/.tmp'
 ROOT = '/app/'
 
+
 def is_remote_git_repo(repo_path):
     # Check if it's a URL
     parsed_url = urlparse(repo_path)
@@ -22,6 +23,7 @@ def is_remote_git_repo(repo_path):
         return False
     # Not a valid remote URL or local path
     raise ValueError("Invalid Git repository path: {}".format(repo_path))
+
 
 def clone(repo_url, logger):
     path = os.path.join(TEMP_PATH, repo_url.replace('https://', '').replace('/', '_'))
@@ -40,11 +42,13 @@ def clone(repo_url, logger):
     else:
         return path
 
+
 def pull(path_to_repo, logger):
     logger.debug(f"Path to repo: {path_to_repo}")
     logger.info(f"Pulling repo")
     repo = Repo(path_to_repo)
     repo.remotes.origin.pull()
+
 
 def checkout(path_to_repo, branch, logger):
     logger.debug(f"Path to repo: {path_to_repo}")
@@ -55,9 +59,11 @@ def checkout(path_to_repo, branch, logger):
     git.for_each_ref()
     logger.info(f"Checked out branch {branch}")
 
+
 def root_calculator(file_path: str) -> str:
     root = file_path.rsplit(os.sep, 1)[0] if os.sep in file_path else file_path
     return root
+
 
 # def initialize():
 #     if not os.path.exists(DATA_PATH):
@@ -72,6 +78,7 @@ def initialize():
         os.mkdir(data)
     return data
 
+
 def setup_logging(route_name):
     logger = logging.getLogger(route_name)
     # Check if the logger already has handlers
@@ -84,15 +91,18 @@ def setup_logging(route_name):
 
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-        error_handler = TimedRotatingFileHandler(f'{path}/error.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        error_handler = TimedRotatingFileHandler(f'{path}/error.log', when='midnight', interval=1, backupCount=7,
+                                                 encoding='utf-8')
         error_handler.setLevel(logging.ERROR)
         error_handler.setFormatter(formatter)
 
-        log_handler = TimedRotatingFileHandler(f'{path}/log.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        log_handler = TimedRotatingFileHandler(f'{path}/log.log', when='midnight', interval=1, backupCount=7,
+                                               encoding='utf-8')
         log_handler.setLevel(logging.INFO)
         log_handler.setFormatter(formatter)
 
-        debug_handler = TimedRotatingFileHandler(f'{path}/debug.log', when='midnight', interval=1, backupCount=7, encoding='utf-8')
+        debug_handler = TimedRotatingFileHandler(f'{path}/debug.log', when='midnight', interval=1, backupCount=7,
+                                                 encoding='utf-8')
         debug_handler.setLevel(logging.DEBUG)
         debug_handler.setFormatter(formatter)
 
