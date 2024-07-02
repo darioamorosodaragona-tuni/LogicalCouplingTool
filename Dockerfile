@@ -21,8 +21,8 @@ COPY . .
 
 
 # Conditional copy of /etc/gitconfig and /etc/.git-credentials
-RUN if [ -f /etc/gitconfig ]; then cp /etc/gitconfig /etc/gitconfig; fi
-RUN if [ -f /etc/.git-credentials ]; then cp /etc/.git-credentials /etc/.git-credentials; fi
+RUN if [ -f ./etc/gitconfig ]; then cp ./etc/gitconfig /etc/gitconfig; fi
+RUN if [ -f ./etc/.git-credentials ]; then cp ./etc/.git-credentials /etc/.git-credentials; fi
 
 
 # Copy the Nginx configuration file
